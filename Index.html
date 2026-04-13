@@ -1,625 +1,775 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema de Exames</title>
-  <link rel="icon" type="image/x-icon" href="favicon(1).ico" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Samaritano · Orçamento de Exames</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
   <style>
+    /* ═══════════════════════════════════════════════════════
+       RESET & VARIÁVEIS — Paleta Hospital Samaritano
+       ═══════════════════════════════════════════════════════ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     :root {
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --primary: #b42318;
-      --primary-2: #7a271a;
-      --soft: #fff1f0;
-      --green: #047857;
-      --green-soft: #ecfdf5;
-      --shadow: 0 8px 24px rgba(16,24,40,.08);
-      --radius: 16px;
+      /* Cores extraídas da logo */
+      --vermelho:        #C0392B;
+      --vermelho-escuro: #962D22;
+      --vermelho-claro:  #E74C3C;
+      --vermelho-bg:     #FDEDEC;
+
+      /* Neutros */
+      --cinza-900: #2C2C2C;
+      --cinza-700: #4A4A4A;
+      --cinza-500: #7F8C8D;
+      --cinza-300: #BDC3C7;
+      --cinza-100: #ECF0F1;
+      --cinza-50:  #F8F9FA;
+      --branco:    #FFFFFF;
+
+      /* Acentos funcionais */
+      --verde:       #27AE60;
+      --verde-valor: #1E8449;
+
+      /* Layout */
+      --radius:    6px;
+      --radius-lg: 10px;
+      --sombra:    0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --sombra-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+      /* Tipografia */
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
-    * { box-sizing: border-box; }
+
     body {
-      margin: 0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: var(--font);
+      background: var(--cinza-50);
+      color: var(--cinza-900);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
-    .topbar {
-      padding: 22px 24px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: white;
-      box-shadow: var(--shadow);
-    }
-    .topbar h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-    .topbar p {
-      margin: 6px 0 0;
-      opacity: .9;
-      font-size: 14px;
-    }
-    .wrap {
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 22px;
-    }
-    .patient {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    .field {
+
+    /* ═══════════════════════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════════════════════ */
+    .header {
+      background: var(--branco);
+      color: var(--cinza-900);
+      padding: 16px 32px;
       display: flex;
-      flex-direction: column;
-      gap: 6px;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 3px solid var(--vermelho);
+      box-shadow: var(--sombra);
     }
-    .field label {
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--cinza-900);
+    }
+
+    .header p {
       font-size: 12px;
-      color: var(--muted);
+      color: var(--cinza-500);
+      margin-top: 2px;
+    }
+
+    .header-logo {
+      height: 46px;
+      border-radius: var(--radius);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       LAYOUT
+       ═══════════════════════════════════════════════════════ */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 20px 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CARDS
+       ═══════════════════════════════════════════════════════ */
+    .card {
+      background: var(--branco);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--sombra);
+      overflow: hidden;
+      border: 1px solid var(--cinza-100);
+    }
+
+    .card-header {
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--branco);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .card-body { padding: 16px 20px; }
+
+    .busca-header {
+      background: var(--vermelho);
+    }
+
+    .orc-header {
+      background: var(--cinza-900);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       DADOS DO PACIENTE
+       ═══════════════════════════════════════════════════════ */
+    .paciente-card { margin: 16px 24px 0; }
+
+    .paciente-card .card-header {
+      background: var(--cinza-700);
+    }
+
+    .paciente-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 14px 20px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--cinza-500);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--cinza-300);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      font-size: 13px;
+      font-family: var(--font);
+      transition: border 0.2s, box-shadow 0.2s;
+      background: var(--cinza-50);
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--vermelho);
+      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+      background: var(--branco);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       BUSCA
+       ═══════════════════════════════════════════════════════ */
+    .search-wrap { position: relative; }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px 10px 40px;
+      border: 1.5px solid var(--cinza-300);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-family: var(--font);
+      transition: border 0.2s, box-shadow 0.2s;
+      background: var(--cinza-50);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--vermelho);
+      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+      background: var(--branco);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      pointer-events: none;
+      color: var(--cinza-500);
+    }
+
+    .search-count {
+      font-size: 11px;
+      color: var(--vermelho);
+      margin-top: 6px;
+      min-height: 16px;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       TABELA DE RESULTADOS
+       ═══════════════════════════════════════════════════════ */
+    .results-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+
+    .results-table thead tr { background: var(--vermelho); color: var(--branco); }
+    .results-table thead th {
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: .04em;
+      letter-spacing: 0.5px;
     }
-    input, select {
-      width: 100%;
-      border: 1px solid #d0d5dd;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 14px;
-      background: white;
+    .results-table thead th:last-child { text-align: center; width: 48px; }
+
+    .results-table tbody tr {
+      border-bottom: 1px solid var(--cinza-100);
+      transition: background 0.15s;
     }
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(180,35,24,.12);
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 18px;
-    }
-    .head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 18px;
-      border-bottom: 1px solid var(--line);
-      background: #fcfcfd;
-    }
-    .head h2 {
-      margin: 0;
-      font-size: 16px;
-    }
-    .body {
-      padding: 16px 18px 18px;
-    }
-    .filters {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .hint {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-    .table-wrap {
-      max-height: 520px;
-      overflow: auto;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    thead th {
-      position: sticky;
-      top: 0;
-      background: #fafafa;
-      z-index: 1;
-      border-bottom: 1px solid var(--line);
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }
-    th, td {
-      padding: 12px 10px;
-      text-align: left;
-      border-bottom: 1px solid #f0f2f5;
-      vertical-align: middle;
-    }
-    tbody tr:hover {
-      background: #fafafa;
-    }
-    .price {
-      white-space: nowrap;
-      text-align: right;
-      font-weight: 700;
-      color: var(--green);
-    }
-    .center { text-align: center; }
+    .results-table tbody tr:hover                   { background: var(--vermelho-bg); }
+    .results-table tbody tr:nth-child(even)          { background: var(--cinza-50); }
+    .results-table tbody tr:nth-child(even):hover    { background: var(--vermelho-bg); }
+
+    .results-table td       { padding: 7px 10px; vertical-align: middle; }
+    .results-table td.preco { color: var(--verde-valor); font-weight: 600; text-align: right; white-space: nowrap; }
+    .results-table td.tuss  { color: var(--cinza-500); font-size: 11px; font-family: 'SF Mono', 'Consolas', monospace; }
+
+    .results-scroll { max-height: 420px; overflow-y: auto; }
+    .results-scroll::-webkit-scrollbar       { width: 4px; }
+    .results-scroll::-webkit-scrollbar-track  { background: transparent; }
+    .results-scroll::-webkit-scrollbar-thumb  { background: var(--cinza-300); border-radius: 4px; }
+    .results-scroll::-webkit-scrollbar-thumb:hover { background: var(--vermelho); }
+
+    /* ═══════════════════════════════════════════════════════
+       BADGES
+       ═══════════════════════════════════════════════════════ */
     .badge {
       display: inline-block;
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      background: var(--soft);
-      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
-    .badge.imagem {
-      background: #eef4ff;
-      color: #175cd3;
+    .badge-lab { background: var(--cinza-100); color: var(--cinza-700); }
+    .badge-img { background: var(--vermelho-bg); color: var(--vermelho); }
+
+    mark {
+      background: rgba(192, 57, 43, 0.15);
+      color: var(--vermelho-escuro);
+      border-radius: 2px;
+      padding: 0 2px;
     }
-    .btn {
+
+    /* ═══════════════════════════════════════════════════════
+       BOTÕES
+       ═══════════════════════════════════════════════════════ */
+    .btn-add {
+      background: var(--verde);
+      color: var(--branco);
       border: none;
-      border-radius: 12px;
-      padding: 11px 14px;
-      font-size: 14px;
-      font-weight: 700;
+      border-radius: var(--radius);
+      width: 30px;
+      height: 28px;
+      font-size: 15px;
       cursor: pointer;
-      transition: .15s ease;
+      transition: background 0.15s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
     }
-    .btn:hover { transform: translateY(-1px); }
-    .btn-primary {
-      background: var(--primary);
-      color: white;
+    .btn-add:hover  { background: #219a52; transform: scale(1.08); }
+    .btn-add:active { transform: scale(0.95); }
+
+    .btn-del {
+      background: none;
+      color: var(--cinza-500);
+      border: 1px solid var(--cinza-300);
+      border-radius: var(--radius);
+      padding: 3px 7px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
     }
-    .btn-soft {
-      background: #f3f4f6;
-      color: #111827;
-    }
-    .btn-green {
-      background: var(--green);
-      color: white;
-    }
-    .mini-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
+    .btn-del:hover { color: var(--vermelho); border-color: var(--vermelho); background: var(--vermelho-bg); }
+
+    .btn-action {
+      flex: 1;
+      padding: 10px 16px;
       border: none;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font);
       cursor: pointer;
-      font-weight: 800;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
-    .mini-add {
-      background: var(--green-soft);
-      color: var(--green);
+    .btn-print       { background: var(--vermelho); color: var(--branco); }
+    .btn-print:hover  { background: var(--vermelho-escuro); }
+    .btn-clear       { background: var(--branco); color: var(--cinza-700); border: 1px solid var(--cinza-300); }
+    .btn-clear:hover  { background: var(--cinza-100); border-color: var(--cinza-500); }
+
+    .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+    .empty-msg { text-align: center; padding: 30px; color: var(--cinza-300); font-size: 13px; }
+
+    /* ═══════════════════════════════════════════════════════
+       TABELA DO ORÇAMENTO
+       ═══════════════════════════════════════════════════════ */
+    .orc-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+
+    .orc-table thead tr  { background: var(--cinza-900); color: var(--branco); }
+    .orc-table thead th  {
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .mini-del {
-      background: #fef2f2;
-      color: #b42318;
+    .orc-table thead th.num { width: 32px; text-align: center; }
+    .orc-table thead th.qty { width: 58px; text-align: center; }
+    .orc-table thead th.val { text-align: right; }
+    .orc-table thead th.sub { text-align: right; }
+    .orc-table thead th.del { width: 36px; }
+
+    .orc-table tbody tr               { border-bottom: 1px solid var(--cinza-100); }
+    .orc-table tbody tr:nth-child(even) { background: var(--cinza-50); }
+
+    .orc-table td      { padding: 7px 10px; vertical-align: middle; }
+    .orc-table td.num  { text-align: center; color: var(--cinza-300); font-size: 11px; }
+    .orc-table td.val  { color: var(--verde-valor); font-weight: 600; text-align: right; white-space: nowrap; }
+    .orc-table td.sub  { color: var(--verde-valor); font-weight: 700; text-align: right; white-space: nowrap; }
+    .orc-table td.tipo { font-size: 11px; }
+
+    .orc-scroll { max-height: 380px; overflow-y: auto; }
+    .orc-scroll::-webkit-scrollbar       { width: 4px; }
+    .orc-scroll::-webkit-scrollbar-track  { background: transparent; }
+    .orc-scroll::-webkit-scrollbar-thumb  { background: var(--cinza-300); border-radius: 4px; }
+
+    .qty-input {
+      width: 48px;
+      text-align: center;
+      border: 1px solid var(--cinza-300);
+      border-radius: var(--radius);
+      padding: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font);
+      background: var(--cinza-50);
     }
-    .summary {
-      display: grid;
-      gap: 10px;
-      margin-top: 14px;
+    .qty-input:focus {
+      outline: none;
+      border-color: var(--vermelho);
+      background: var(--branco);
     }
-    .summary-row {
+
+    /* ═══════════════════════════════════════════════════════
+       TOTAIS
+       ═══════════════════════════════════════════════════════ */
+    .totals {
+      margin-top: 16px;
+      border-top: 1px solid var(--cinza-100);
+      padding-top: 14px;
+    }
+
+    .total-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 15px;
-    }
-    .summary-row.total {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: white;
-      padding: 16px;
-      border-radius: 14px;
-      font-size: 18px;
-      font-weight: 800;
-      margin-top: 6px;
-    }
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
-    .muted {
-      color: var(--muted);
+      padding: 5px 0;
       font-size: 13px;
     }
-    .empty {
-      padding: 24px;
+    .total-row.desconto { color: var(--vermelho); }
+    .total-row.final {
+      margin-top: 10px;
+      padding: 14px 16px;
+      background: var(--vermelho);
+      border-radius: var(--radius);
+      color: var(--branco);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .desconto-wrap { display: flex; align-items: center; gap: 8px; }
+
+    .desconto-input {
+      width: 64px;
+      border: 1px solid var(--vermelho);
+      border-radius: var(--radius);
+      padding: 4px 8px;
+      font-size: 13px;
+      color: var(--vermelho);
+      font-weight: 600;
+      font-family: var(--font);
       text-align: center;
-      color: var(--muted);
+      background: var(--vermelho-bg);
     }
-    .small {
-      font-size: 12px;
-      color: var(--muted);
+    .desconto-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1); }
+
+    /* ═══════════════════════════════════════════════════════
+       TOAST
+       ═══════════════════════════════════════════════════════ */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--cinza-900);
+      color: var(--branco);
+      padding: 10px 18px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--sombra-md);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 9999;
     }
-    .qty {
-      width: 70px;
-      text-align: center;
-      padding: 8px 10px;
-    }
-    .footer-note {
-      margin-top: 14px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    @media (max-width: 980px) {
-      .grid, .patient, .filters {
-        grid-template-columns: 1fr;
-      }
-    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ═══════════════════════════════════════════════════════
+       PRINT
+       ═══════════════════════════════════════════════════════ */
     @media print {
       body { background: white; }
-      .topbar, .search-card, .actions, .footer-note { display: none !important; }
-      .wrap { padding: 0; max-width: none; }
-      .patient { margin-bottom: 10px; }
-      input, select { border: 1px solid #ddd; box-shadow: none !important; }
-      .card { box-shadow: none; border: 1px solid #ddd; }
-      .budget-card { width: 100%; }
-      .grid { grid-template-columns: 1fr; }
-      .search-card { display: none !important; }
+      .layout { grid-template-columns: 1fr; }
+      .card:first-child { display: none; }
+      .actions, .btn-del, .qty-input { display: none; }
+      .header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .total-row.final { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     }
   </style>
 </head>
+
 <body>
-  <div class="topbar" style="display:flex; align-items:center; gap:12px;">
-    <img src="apple-touch-icon.png" alt="Logo" style="height:40px; width:40px; object-fit:contain; border-radius:8px; background:#fff; padding:2px;">
+
+  <!-- ══════════ HEADER ══════════ -->
+  <div class="header">
+    <img class="header-logo"
+         src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxIRBhIQEBIQEhIQFxIWFhMWERAWEhkWIBUYGCAZFxckIDQgGBomHRYYIjIiJio3Ly4uFx8zODMsNygtLisBCgoKDg0OGxAQGisiICUrLSsvNy0uNS0tLS0tLS0uLS0rLS8tMC0tLS0tLS0tLS0tLy0tLS0tLi0tLS0tLS0tLf/AABEIAOAA4AMBEQACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAABAUDBgcBAv/EAEUQAAIBAgQCBgYHBQQLAAAAAAABAgMRBAUSIQYxEyIyQVFhByNxgZGxFBZCUmKhshdzgsHRM3Lh8BUlJjQ1Y5Kis7TD/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAIDBAEFBv/EADURAQACAgAEBAMGBgIDAQAAAAABAgMRBBIhMQUTQVFhcYEUFSIzkfAlMqGx0eFCwTSywiP/2gAMAwEAAhEDEQA/AO4gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqWe+kLB4XEuledepHaUaSTUX4OTaV/Jciu2WsNuHgcuSN9o+LHkvpHwWIxCpy6TDzk7R6VRUG/DWm0n7bCMtZdy8BlpG46/JuJYwgAAAAAAAAAAAAAAAAAAAAAAAAAAANV9JebTw3C03SbjUrSjSjJNpx1X1NPuelSs+52ZXktqrZwOKMmaN9o6uS5VlqcEkjK+hfeaZalBpoDp/orzadfhvRUblPCzdLU+bjpUo38bKWn+E1Yrbq8DxDFFMu49ercixhAAAAAAAAAAAAAAAAAAAAAAAAAAA1b0kZRPFcLzVJaqlGUasYrnLTe6Xm4uVvOxXkrurXwOWMeWJt2no5LlWYKMTK+ifeaZkpQbbA6f6Lconh+G9dVOM8TN1dL5qNlGKa7naN7d2o1Yq6q8DxDLGTLqO0dG4ljCAAAAAAAAAAAAAAAAAAAAAAAAACuzzMegwd125bRXn4+xf0Aosgz2UamivJyjJ7TfOLfj+H5AfeecAYLFYh1bVKNSe8p0ZKOrzcWnG/na7K7Y6y2YeOy4413j4vjJ/R5gcNXVVqpXlDdSrTi4xfjpSUdvNbCuKsO5ePzZI5e3ya9xpxlOpX6HCTlCnTkm6sXZzknfqv7ia9/s513yb6Q3cJwUVjmyR1n09v8Af9m5cHZ8sZlSlKyq0+rUS8e6S8mt/iu4tpbmh53F8P5N9R2nsvSbKAAAAAAAAAAAAAAAAAAAAAAAAGk8Q4jpMzl92n1V7uf5/ICAqZ0X2RZtotTqPqfZk/s+T8vkcGvcacVOs3h8O/VcpzX2/Jfg+fs558mTfSHt8FwfJ+O/f0+H+2lOmUvSXvAuYvD8RQTdoV/Vy9r7L/6rfFk8dtWY+NxeZin3jr/l2A1vngAAAAAAAAAAAAAAAAAAAAAAB8Vp6aUpfdTfwQGhJXd3ze50ZIwAqcyxWq8Idnvfj5ewptbfSHocPw/L+K3dUVsNtdFNqvTxZddJRJUyDUx7xkpLnFpr2rcOa30l3PC1teFhNfbjGXxVzbHWHyt68tphlOogAAAAAAAAAAAAAAAAAAAAAEbMn/q+p/dl8gNOpwOuIOPxN7why+0/5Iqvb0hv4fBr8dkONErbSVECDisN3r3kLV9WjFl/4yr6kCDU7Dw475Bh/wB1T/SjZT+WHzPE/nW+crEkoAAAAAAAAAAAAAAAAAAAAAAMGNjfBzXjGXyA0XH19NHSu1L8kRvbUNHDYue257Qg0aZS9NLhS2ATo7ARK1MCnxtK0r9zK7Rpsw35o1LrWSUtOT0I+FOn+lGqvaHzued5bT8ZTSSoAAAAAAAAAAAAAAAAAAAAAAPkBzHMJXzKok7qEpQXubXzuUWncvWwU5KRH1ZaBxasKKAVkgK+uBCWF6XFQp/flGPxaT/I5rfR2Mnl7s6qlZW8DS8N6AAAAAAAAAAAAAAAAAAAAAAA+Ks9NJyf2U3+QdiNzpyHB4jVJ35tt/HdmSsvos+PXWFpRmTZ02FXYBOrsBDrTAyZXT9Z0n3ez7fEspHqx8Xk6ckOjwd4p+JYwPQAAAAAAAAAAAAAAAAAAAAAAEbM/wDhtX93U/SzluyzF/PX5w4xRnazMT6iY30la4bEXj5lkTtiyUmkpcaxJWSrAe4ek6lS3JLm/wDPedrXarNljHHxWrsoWWyRfDyrTMzuW64X/dof3Y/IOMoAAAAAAAAAAAAAAAAAAAAAAD4qw1UnF8pJr8g7E6nbhjTjNxfOLaftTsYX1cTuNs1OrZ3QLVi0alOpYm6LYnbDek1lKwlJ1Kllslzfh/iSrXbPlyxjjcrunFRpqMdki+I08u95tO5eN3kkubsjqDfYRtFLwOOvQAAAAAAAAAAAAAAAAAAAAAAADjvGuCdDiSqrWjVfSR/i3f8A3ajJkjVn0fBZOfDHw6fp/pTRqEGpccN5RUxeO0w6sI2c6ltor+bfcidKzM9Gbis1MVPxfRteMy14aShbqfZl4+3zNcRp87e82ncokqh1FNyGh0maQ8IdZ+7l+djg3YAAAAAAAAAAAAAAAAAAAAAAAAAatx/kTxOVdJTV61C8opc5R+1H27XXmrd5XkruG7geI8q+rdpc34cyepjMeqdPaKs5za2hHz8/Bd5nrWbTp7GfPXDXmn6fF2XKctp4bBRo0laMe/7TffKT72zXWsRGofO5ctstuazLjMLGrQcJq6fxT8V5nVbRc1wU6GI0y3T7Mu5r+vkdG1cN5c6WD1TVp1LNrvS7l/P3nBbgAAAAAAAAAAAAAAAAAAAAAAAAABgw2Ep09XRwjDXJzlpSV5Pm35nIiISte1tbnemc6iAY6tGM7aoqWlpq6vZ+KAyAAAAAAAAAAAAAAAAAAAAA81K4NPQIGe4qVLKalWnbVBXV4trmu64Fdic5qRx0oQs1poKOulUg+knU6O7vzirXsl5XA+8XmFeliHSemo9MJ64UpNqGrTL1eq8mtrWfJvbbcIss6raurUpTvSqzjpoVW5SjVcVDTqvF2smu5pgfVfNMSsFi6qdGKwvSdVwk3dUKdVRfW33nJN+SAyZtmtXD6dc6LtqqS6rTlRTgmorVtPrStzvpAsMNipyzmtTbj0dOnRlG0d7zc1vK+69X4d4E9TWpq6uuavug7qdbfQcAAAAAAAAAAAAAAAAAABQ8b42pR4aqzpNxl1I6lzinJJtPudnzKs1prSZh6PhWKmXiq1v1jr/SGq5Zw5g8VkSlRqp42UE3KdaepVO9Sjz03ur28zPXFS9ek9XsZ+P4rhuImL1//KJ9I9PTU+/1bBVzf/R+AwuFnSq16zppJUlqT0pJvffv8C6b+XEV1uXmV4X7bkyZq2itd/8ALp3/AH7seH4lpYvFPA16OIw86i7Mure3WtfmrpeG52meJtyzGpc4jwq+LD51LxavwQJcS4aeZ1IV8PjI1NCg4u8pPS1KKjGLupXepS2tzuiP2iN6mJWT4Lfy4yUvWYn46j57l8YTibCzxUo1KWNp1Y2km3OVZtJpQSW62nJ2tbm2I4iJnUxLuTwTLWsWresxPrvUR8d+370lcNZ5h6mfKkqOIo1dNRJVJPe7dSWpXupNty/yiVM8Wty60q4rwm+DD50Wi0fD99erBi8+pP6XTp4TG1qc5zVeavpulolZq9lpil3bI5Ofr0iZ0nTweeWs3y1rNoiYjfXql08/oVMlq4ynTxNTaNGrC61Rik3q52taTd195nYzxNeaIV28KvTiIwXtEbjpPpPw+auwee4apCKpUcdOVVQpTipSajCLajrl/E/i7kY4iJ7RK3J4LfHvnvWIiPfv8oOHsfS+s2Lrwo4z6Q6dSUqMnT5qULwS56r2tfZEMdo55mInbZxmHJ9lxY7XpybiImN+09fl76Y+A87rvMasJxxVdVJxWpzlONJXl2rvqr2eBzBktuYnc/8ASXi/B4ox1tWa11E+mpt27a7/AFW1TjlaZyp4PF1KdNtSqaUo7c3fdWLPtHtWWKPBp6VvlrFp9N9UuXF9N5EsXTpVqkFLTOKUdUHa95b2ty3v3ol50cvNEKY8KvHEeRe0ROtx7T8kOfH1L6EqkMPiZ89VodSFm11p8vPYj9ojW4iV8eCZPMmlslY9uvWflHdbYPiahPIfpkm6dNXTUl1lJO2lJc29rW8ScZazXmY8nh2anEfZ46z8Pb3VX17iqaqywmLjQk7Ks4LTztfny9jIfaI76nTX9y2mZpXLWb+221YXEwq4aNSnJShNJxkuTRfExMbh5GTHbHaaWjUwynUAAAAAAAAAAAqOKMzp4bKXOtTdWnJqDglF3vfmntbYry3itdzDbwHDZM+aK47csx138mm8XcNYOjlLxOHm6c04OMOk1KV5Ls36yaTb2fcZsuKla81XueHeIcVlzeTljcddzrWte/o+6XEWLksDhYzjSqVqcXKvOClKzlJR57bxiva5HYy3/DXtty3AcNHnZpibRWelYnXpG+3xn6Qw1oVIekXDKtXjXmlC9RQhDuqWi0tr/wBUcncZo3O06zS3hmScdOWOvTcz7deqbgJL9qtbddl/+KmSr+fKjNH8Ip8/+5e0Wv2rS5dn/wCKEfn/AL9nLR/CI+f/ANMVWaXpYT8E/wD1Wcn8/wDfsnWN+DzH7/nZMmzbF47p6kcTSwtOk36voactrN3k5br2+N+R2l75NzvSHE8Lw3CclJxzeZ9dzH6aQODpL6nZluuxU7/+SyGH8uzT4nE/beH+cf8As2D0Yv8A2bf7yp8ol3DfyPN8d/8AK+kKzhmS/aRjN1uq366ZDH+dLXx0T92Yvp/aXno6rqFXHt7uLUtPe7OpyRzh51zHjVJvGGPp/Z5leaYvG5XiK7xVLD06euPQqjTaa0KW8nuk9Vr35pit73rM707n4bhuEy0xeXN7TrruffXaOiHw5Jfs7xy25y2v+CBHH+VZfxsT95Yfp/eVvw41+zOpy7GK/VMsx/k/qw8bH8Uj50/tDVcRTm/R5TcezDEzc7d14NJvyu7e9FExPk/V7FLVjxK0T3mka/Xq3nO8fh3wLNxlDROiowV12tNlFLxT7u63kar2r5X0fP8AC4M0eIRExO4tufl6z9Yffo6pTjwtT1360pyjf7rlt7nu/eOHieTqj41atuLty+0RPz02YveUAAAAAAAAAAETNMtpYnDdHWjrhdO15LdeaZG1YtGpXYOIyYL8+OdSqaPBOAjV1KgnbulOpKPwbsyuMGOPRtt4xxlo1z/0hOzXIcNiYx6akpaNotNxaXgmu7yJ2x1t3hm4fjc/D78u2t9/X+6LPhDBPR6iK6PlaU0+d+s73lv4kfJp7Lo8V4uN/j7/AC/p7PaPCWDhilVjRtOMlJPXU7V73tfxEYaRO9FvFOKtSaTbpMa7R2/Qjwlg1jFWVH1inr1a6na1ar2vbmPJpveifFOKmnl83TWu0du3sfVLB/TOm6H1mvpNWup29Wq9r25jyab3o+9OK5PL5umtdo7a17PZ8J4J43pnQjqb1PeWhu97uF9PPyHk03vTkeJ8VGPy4vOu3x/Xu+Pqdguv6n+0tda6iXO+yvsrjyKeyX3txfT8fb4R/hKyvh/DYacnQp6HNaZdabuveyVcda9oU8Rx2fPERktvXwhHwfCODpYmFSnR0zptOL11HZ+9kYw0idxC3L4pxWSs0tbcT36R/h7PhnBxx/0rorTi3UvF1Laud9Cdm++1jvk05ubSP3lxPleVNvw616dvmgrJ8sWLVXoo6pdHJK1Vweu7i1Dsu+l225q3M55NN70lPinFzTk551/X9e7DTyTLLSiqT0y0S7Ve7blOKjGN9V01LZL5DyKeyX3txe4nn7fCP8MuCyrAPL+j6KUIV5q8W67WqM5QjefKO97JtXuPJprWkJ8T4mbxebdY3rpHr9GXK6GBoyqU6VO1OrCDk30k41E5OKUYvtXvta6dyVcVa9oV5uOz5pib26x29NfoiVshy+FenUhhlUVTpGuvPQnCLk04t/hatbnsVWxY6z2bsXiHF5aTHma1r069Z13bVgqqng4TS0qUYtR22TV0i+J3G3k5a8t5rM71LMdQAAAAAAAAAAAAAAAAAAAAAAAHk43g0+9NAVNLI1GcH0s3oVBK6hypubiuX43cDynkSjVUlUnqi7xdobPXUl4b/wBrNexgefV+OpN1Ju0lJXVN2aqSqbbbXcmnbnZeAB8Pw0wTnNqnGEIJqm0lF3jfbrbXTvzuBmq5OnTppTcei6S2mFNJucZJ7Wsu0/53I2rtfhz+XExre9f0nadhKPR4WFO7eiMY3druytudiNRpXkvz3m3vO2U6gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//Z"
+         alt="Hospital Samaritano">
     <div>
-      <h1>Sistema de Exames</h1>
-      <p>Arquivo único em HTML com o banco de exames embutido, sem Firebase.</p>
+      <h1>Sistema de Orçamento — Exames Particulares</h1>
+      <p id="data-header"></p>
     </div>
   </div>
 
-  <div class="wrap">
-    <div class="patient">
-      <div class="field">
-        <label>Paciente</label>
-        <input id="pacienteNome" placeholder="Nome do paciente" />
-      </div>
-      <div class="field">
-        <label>CPF</label>
-        <input id="pacienteCpf" placeholder="CPF" />
-      </div>
-      <div class="field">
-        <label>Data</label>
-        <input id="pacienteData" type="date" />
-      </div>
-      <div class="field">
-        <label>Observação</label>
-        <input id="pacienteObs" placeholder="Observações opcionais" />
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card search-card">
-        <div class="head">
-          <h2>Buscar exames</h2>
-          <div class="small"><span id="totalExames"></span> exames carregados</div>
-        </div>
-        <div class="body">
-          <div class="filters">
-            <input id="busca" placeholder="Digite nome, código TUSS, categoria..." />
-            <select id="filtroTipo">
-              <option value="">Todos os tipos</option>
-              <option value="sangue">Sangue</option>
-              <option value="imagem">Imagem</option>
-            </select>
-            <select id="filtroCategoria">
-              <option value="">Todas as categorias</option>
-            </select>
-          </div>
-          <div class="hint" id="resumoBusca"></div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Exame</th>
-                  <th>Tipo</th>
-                  <th>Categoria</th>
-                  <th>Cód. TUSS</th>
-                  <th class="center">Ação</th>
-                </tr>
-              </thead>
-              <tbody id="resultadoBusca"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="card budget-card">
-        <div class="head">
-          <h2>Orçamento</h2>
-          <div class="small"><span id="itensCount">0</span> item(ns)</div>
-        </div>
-        <div class="body">
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Exame</th>
-                  <th>Qtd</th>
-                  <th>Valor</th>
-                  <th>Subtotal</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="orcamentoTabela"></tbody>
-            </table>
-          </div>
-
-          <div class="summary">
-            <div class="summary-row">
-              <span>Subtotal</span>
-              <strong id="subtotalValor">R$ 0,00</strong>
-            </div>
-            <div class="summary-row">
-              <span>Desconto (%)</span>
-              <input id="desconto" class="qty" type="number" min="0" max="100" step="1" value="0" />
-            </div>
-            <div class="summary-row">
-              <span>Desconto (R$)</span>
-              <strong id="descontoValor">R$ 0,00</strong>
-            </div>
-            <div class="summary-row total">
-              <span>Total final</span>
-              <span id="totalFinal">R$ 0,00</span>
-            </div>
-          </div>
-
-          <div class="actions">
-            <button class="btn btn-primary" id="btnImprimir">Imprimir</button>
-            <button class="btn btn-soft" id="btnLimpar">Limpar orçamento</button>
-            <button class="btn btn-green" id="btnExportar">Exportar orçamento JSON</button>
-          </div>
-
-          <div class="footer-note">
-            Os dados já estão embutidos neste HTML. Pode hospedar ou abrir localmente sem banco de dados.
-          </div>
-        </div>
-      </div>
+  <!-- ══════════ DADOS DO PACIENTE ══════════ -->
+  <div class="card paciente-card">
+    <div class="card-header">Dados do Paciente</div>
+    <div class="paciente-grid">
+      <div class="field"><label>Paciente</label><input id="pac-nome" type="text" placeholder="Nome completo"></div>
+      <div class="field"><label>Médico Solicitante</label><input id="pac-medico" type="text" placeholder="Dr(a). Nome"></div>
+      <div class="field"><label>Data</label><input id="pac-data" type="date"></div>
+      <div class="field"><label>Telefone</label><input id="pac-tel" type="text" placeholder="(00) 00000-0000"></div>
+      <div class="field"><label>Convênio</label><input id="pac-convenio" type="text" value="PARTICULAR"></div>
+      <div class="field"><label>Nº Atendimento</label><input id="pac-atend" type="text" placeholder="000000"></div>
     </div>
   </div>
 
+  <!-- ══════════ CONTEÚDO PRINCIPAL ══════════ -->
+  <div class="layout">
+
+    <!-- BUSCA DE EXAMES -->
+    <div class="card">
+      <div class="card-header busca-header">
+        Busca de Exames
+        <span style="font-size:10px;opacity:.7;margin-left:auto;font-weight:400;text-transform:none" id="total-exames"></span>
+      </div>
+      <div class="card-body">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="search" type="text"
+                 placeholder="Digite o nome do exame..."
+                 autocomplete="off">
+        </div>
+        <div class="search-count" id="search-count"></div>
+        <div class="results-scroll">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Exame</th>
+                <th>Tipo</th>
+                <th>TUSS</th>
+                <th style="text-align:right">Preço</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="results-body">
+              <tr><td colspan="5" class="empty-msg">Aguardando pesquisa...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORÇAMENTO -->
+    <div class="card">
+      <div class="card-header orc-header">Orçamento do Paciente</div>
+      <div class="card-body">
+        <div class="orc-scroll">
+          <table class="orc-table">
+            <thead>
+              <tr>
+                <th class="num">#</th>
+                <th>Exame / Procedimento</th>
+                <th class="qty" style="text-align:center">Qtde</th>
+                <th class="val">Valor</th>
+                <th class="sub">Subtotal</th>
+                <th class="del"></th>
+              </tr>
+            </thead>
+            <tbody id="orc-body">
+              <tr id="orc-empty"><td colspan="6" class="empty-msg">Adicione exames pela busca ao lado</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="totals">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span id="subtotal">R$ 0,00</span>
+          </div>
+          <div class="total-row desconto">
+            <div class="desconto-wrap">
+              <span>Desconto</span>
+              <input class="desconto-input" id="desconto" type="number" min="0" max="100" value="0" step="0.5"> %
+            </div>
+            <span id="val-desconto">– R$ 0,00</span>
+          </div>
+          <div class="total-row final">
+            <span>Total a Pagar</span>
+            <span id="total-final">R$ 0,00</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-action btn-print" onclick="window.print()">🖨️ Imprimir</button>
+          <button class="btn-action btn-clear" onclick="limparOrcamento()">Limpar Tudo</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       DADOS DOS EXAMES
+       ═══════════════════════════════════════════════════════ -->
+  <script id="dados-exames">
+const EXAMES = [{"nome": "Acido Urico", "tipo": "Sangue/Lab", "tuss": "40301150", "preco": 15.0}, {"nome": "Acido Folico", "tipo": "Sangue/Lab", "tuss": "40301087", "preco": 30.0}, {"nome": "Aluminio", "tipo": "Sangue/Lab", "tuss": "40301273", "preco": 50.0}, {"nome": "Amilase", "tipo": "Sangue/Lab", "tuss": "40301281", "preco": 15.0}, {"nome": "Aslo (anti-estreptolisina)", "tipo": "Sangue/Lab", "tuss": "40306445", "preco": 40.0}, {"nome": "Ácido Valproico", "tipo": "Sangue/Lab", "tuss": "40301168", "preco": 60.0}, {"nome": "Aldolase", "tipo": "Sangue/Lab", "tuss": "40301230", "preco": 20.0}, {"nome": "Aldosterona (urina)", "tipo": "Sangue/Lab", "tuss": "40316050", "preco": 60.0}, {"nome": "Aldosterona (soro)", "tipo": "Sangue/Lab", "tuss": "40316050", "preco": 40.0}, {"nome": "Alfa Fetoproteina", "tipo": "Sangue/Lab", "tuss": "40316068", "preco": 40.0}, {"nome": "Alfa 1 Glicoproteina Ácida", "tipo": "Sangue/Lab", "tuss": "40301257", "preco": 25.0}, {"nome": "Androstenediona", "tipo": "Sangue/Lab", "tuss": "40316076", "preco": 45.0}, {"nome": "Antidesoxiribonuclease b", "tipo": "Sangue/Lab", "tuss": "40307930", "preco": 120.0}, {"nome": "Anticorpos Anti Tireoglobulina", "tipo": "Sangue/Lab", "tuss": "40316106", "preco": 40.0}, {"nome": "Anticorpos Anti Microssomal", "tipo": "Sangue/Lab", "tuss": "40306348", "preco": 40.0}, {"nome": "Antigeno Prostático Específico", "tipo": "Sangue/Lab", "tuss": "40316149", "preco": 40.0}, {"nome": "Antigeno Prostático Específico Total e Livre", "tipo": "Sangue/Lab", "tuss": "40316130", "preco": 40.0}, {"nome": "Antigeno Carcinoembriogenico (CEA)", "tipo": "Sangue/Lab", "tuss": "40316122", "preco": 55.0}, {"nome": "Anticorpos Anti Cardiolipina IGG", "tipo": "Sangue/Lab", "tuss": "40306143", "preco": 70.0}, {"nome": "Anticorpos Anti Cardiolipina IGM", "tipo": "Sangue/Lab", "tuss": "40306151", "preco": 70.0}, {"nome": "Anticorpos Anti Cardiolipina IGA", "tipo": "Sangue/Lab", "tuss": "40306135", "preco": 70.0}, {"nome": "Anticorpo anti-receptor de TSH (RESTH)", "tipo": "Sangue/Lab", "tuss": "40316084", "preco": 80.0}, {"nome": "Antiperoxidase Tireoideana", "tipo": "Sangue/Lab", "tuss": "40306437", "preco": 70.0}, {"nome": "Antigliadina - IGM", "tipo": "Sangue/Lab", "tuss": "40306321", "preco": 80.0}, {"nome": "Antigliadina - IGA", "tipo": "Sangue/Lab", "tuss": "40306305", "preco": 60.0}, {"nome": "Antigliadina - IGG", "tipo": "Sangue/Lab", "tuss": "40306313", "preco": 60.0}, {"nome": "Antimusculo Liso", "tipo": "Sangue/Lab", "tuss": "40306399", "preco": 50.0}, {"nome": "Anti RNP", "tipo": "Sangue/Lab", "tuss": "40306100", "preco": 55.0}, {"nome": "Anti Ro/SSA", "tipo": "Sangue/Lab", "tuss": "40306119", "preco": 40.0}, {"nome": "Anti LA/SSB", "tipo": "Sangue/Lab", "tuss": "40306089", "preco": 40.0}, {"nome": "Anti SM", "tipo": "Sangue/Lab", "tuss": "40306127", "preco": 40.0}, {"nome": "Antitrombina III", "tipo": "Sangue/Lab", "tuss": "40304060", "preco": 60.0}, {"nome": "Antibiograma (QUALQUER MATERIAL)", "tipo": "Sangue/Lab", "tuss": "40310426", "preco": 80.0}, {"nome": "Anticoagulante Lupico", "tipo": "Sangue/Lab", "tuss": "40304019", "preco": 60.0}, {"nome": "Adrenocorticotrofico (ACTH)", "tipo": "Sangue/Lab", "tuss": "40316041", "preco": 60.0}, {"nome": "Anal Swab (cultura+antibiograma)", "tipo": "Sangue/Lab", "tuss": "40303020", "preco": 150.0}, {"nome": "Bilirrubina totais e frações", "tipo": "Sangue/Lab", "tuss": "40301397", "preco": 15.0}, {"nome": "Biotina", "tipo": "Sangue/Lab", "tuss": "40322122", "preco": 300.0}, {"nome": "BHCG, Dosagem Qualitativa", "tipo": "Sangue/Lab", "tuss": "40316327", "preco": 35.0}, {"nome": "BHCG Quantitativo Sangue", "tipo": "Sangue/Lab", "tuss": "40305767", "preco": 50.0}, {"nome": "Beta 2 Microglobulina (urina)", "tipo": "Sangue/Lab", "tuss": "40306470", "preco": 90.0}, {"nome": "Beta 2 Microglobulina (soro)", "tipo": "Sangue/Lab", "tuss": "40306470", "preco": 90.0}, {"nome": "Bacterioscopia", "tipo": "Sangue/Lab", "tuss": "40310060", "preco": 20.0}, {"nome": "Calprotectina", "tipo": "Sangue/Lab", "tuss": "40323986", "preco": 150.0}, {"nome": "Cariotipo Técnicas com Bandas G(Sangue- Constitucional)", "tipo": "Sangue/Lab", "tuss": "40501051", "preco": 550.0}, {"nome": "Coagulograma", "tipo": "Sangue/Lab", "tuss": "40304922", "preco": 60.0}, {"nome": "Creatinina", "tipo": "Sangue/Lab", "tuss": "40301630", "preco": 15.0}, {"nome": "Colesterol Total", "tipo": "Sangue/Lab", "tuss": "40301605", "preco": 15.0}, {"nome": "Colesterol HDL", "tipo": "Sangue/Lab", "tuss": "40301583", "preco": 10.0}, {"nome": "Colesterol LDL", "tipo": "Sangue/Lab", "tuss": "40301591", "preco": 10.0}, {"nome": "Colesterol VLDL", "tipo": "Sangue/Lab", "tuss": "40302695", "preco": 10.0}, {"nome": "Calcio Total, Soro", "tipo": "Sangue/Lab", "tuss": "40301400", "preco": 14.0}, {"nome": "Calcio Ionico", "tipo": "Sangue/Lab", "tuss": "40301419", "preco": 40.0}, {"nome": "Carbamazepina", "tipo": "Sangue/Lab", "tuss": "40301435", "preco": 50.0}, {"nome": "Capacidade de Fixação de Ferro", "tipo": "Sangue/Lab", "tuss": "40301427", "preco": 20.0}, {"nome": "Cloro sérico", "tipo": "Sangue/Lab", "tuss": "40301559", "preco": 15.0}, {"nome": "Coombs Direto", "tipo": "Sangue/Lab", "tuss": "40304108", "preco": 18.0}, {"nome": "Coombs Indireto", "tipo": "Sangue/Lab", "tuss": "40304884", "preco": 50.0}, {"nome": "Creatinofosfoquinase (CPK)", "tipo": "Sangue/Lab", "tuss": "40301648", "preco": 40.0}, {"nome": "Creatinofosfoquinase Fração MB (CKMB)", "tipo": "Sangue/Lab", "tuss": "40301664", "preco": 40.0}, {"nome": "Crescimento do Hormônio HGH", "tipo": "Sangue/Lab", "tuss": "40316203", "preco": 70.0}, {"nome": "Cortisol, Soro", "tipo": "Sangue/Lab", "tuss": "40316190", "preco": 35.0}, {"nome": "Cortisol, Salivar (cada coleta)", "tipo": "Sangue/Lab", "tuss": "40316190", "preco": 70.0}, {"nome": "Citologia Oncotica (liquidos e secreções)", "tipo": "Sangue/Lab", "tuss": "40601137", "preco": 60.0}, {"nome": "Citomegalovirus, Anticorpos IGG", "tipo": "Sangue/Lab", "tuss": "40306666", "preco": 50.0}, {"nome": "Citomegalovirus, Anticorpos IGM", "tipo": "Sangue/Lab", "tuss": "40306674", "preco": 50.0}, {"nome": "CA 125", "tipo": "Sangue/Lab", "tuss": "40316378", "preco": 70.0}, {"nome": "CA 199", "tipo": "Sangue/Lab", "tuss": "40316378", "preco": 80.0}, {"nome": "Chagas - IGG Imunofluorescencia", "tipo": "Sangue/Lab", "tuss": "40306615", "preco": 40.0}, {"nome": "Chagas -IGM Imunofluorescencia", "tipo": "Sangue/Lab", "tuss": "40306623", "preco": 45.0}, {"nome": "Chagas (Machado Guerreiro)", "tipo": "Sangue/Lab", "tuss": "40307972", "preco": 80.0}, {"nome": "Chlamydia - IGM", "tipo": "Sangue/Lab", "tuss": "40306640", "preco": 75.0}, {"nome": "Chlamydia - IGG", "tipo": "Sangue/Lab", "tuss": "40306631", "preco": 75.0}, {"nome": "Caxumba - IGG", "tipo": "Sangue/Lab", "tuss": "40306593", "preco": 100.0}, {"nome": "Caxumba - IGM", "tipo": "Sangue/Lab", "tuss": "40306607", "preco": 100.0}, {"nome": "Cromo (soro e urina)", "tipo": "Sangue/Lab", "tuss": "40313310", "preco": 55.0}, {"nome": "Chumbo urina", "tipo": "Sangue/Lab", "tuss": "40313107", "preco": 65.0}, {"nome": "Chumbo sérico", "tipo": "Sangue/Lab", "tuss": "40313107", "preco": 60.0}, {"nome": "Curva Glicêmica (4 Dosagens)", "tipo": "Sangue/Lab", "tuss": "40301680", "preco": 90.0}, {"nome": "Curva Glicêmica (6 Dosagens)", "tipo": "Sangue/Lab", "tuss": "40305228", "preco": 120.0}, {"nome": "Complemento C2", "tipo": "Sangue/Lab", "tuss": "40306690", "preco": 150.0}, {"nome": "Complemento C3", "tipo": "Sangue/Lab", "tuss": "40306704", "preco": 30.0}, {"nome": "Complemento C4", "tipo": "Sangue/Lab", "tuss": "40306712", "preco": 30.0}, {"nome": "Complemento CH-50", "tipo": "Sangue/Lab", "tuss": "40306747", "preco": 40.0}, {"nome": "Cultura de Fezes ( Coprocultura )", "tipo": "Sangue/Lab", "tuss": "40310175", "preco": 60.0}, {"nome": "Cultura para Fungos", "tipo": "Sangue/Lab", "tuss": "40310140", "preco": 170.0}, {"nome": "Cultura de Urina (urocultura)", "tipo": "Sangue/Lab", "tuss": "40310213", "preco": 90.0}, {"nome": "Cultura de Urina (urocultura) + antibiograma", "tipo": "Sangue/Lab", "tuss": "40310213", "preco": 120.0}, {"nome": "CULTURA DE MATERIAIS DIVERSOS + antibiograma", "tipo": "Sangue/Lab", "tuss": "40310124", "preco": 150.0}, {"nome": "Cobre sérico", "tipo": "Sangue/Lab", "tuss": "40301567", "preco": 50.0}, {"nome": "Desidrogenase Lactica", "tipo": "Sangue/Lab", "tuss": "40301729", "preco": 30.0}, {"nome": "Dihidrotestosterona", "tipo": "Sangue/Lab", "tuss": "40316220", "preco": 40.0}, {"nome": "Dihidroepiandrosterona (DHEA)", "tipo": "Sangue/Lab", "tuss": "40316211", "preco": 70.0}, {"nome": "Dimero D", "tipo": "Sangue/Lab", "tuss": "40304906", "preco": 100.0}, {"nome": "Dengue - IGM Anticorpo", "tipo": "Sangue/Lab", "tuss": "40306798", "preco": 100.0}, {"nome": "Dengue - IGG Anticorpo", "tipo": "Sangue/Lab", "tuss": "40306798", "preco": 100.0}, {"nome": "DENGUE ANTIGENO NS1  - teste rápido", "tipo": "Sangue/Lab", "tuss": "40324192", "preco": 50.0}, {"nome": "Dengue Teste Rápido - IGG", "tipo": "Sangue/Lab", "tuss": "40324559", "preco": 25.0}, {"nome": "Dengue Teste Rápido - IGM", "tipo": "Sangue/Lab", "tuss": "40324567", "preco": 25.0}, {"nome": "Anti Endomísio IgG", "tipo": "Sangue/Lab", "tuss": "40306259", "preco": 60.0}, {"nome": "Anti Endomísio IgM", "tipo": "Sangue/Lab", "tuss": "40306259", "preco": 60.0}, {"nome": "Anti Endomísio IgA", "tipo": "Sangue/Lab", "tuss": "40306259", "preco": 60.0}, {"nome": "Estradiol", "tipo": "Sangue/Lab", "tuss": "40316246", "preco": 50.0}, {"nome": "Estrona", "tipo": "Sangue/Lab", "tuss": "40316262", "preco": 60.0}, {"nome": "ESPERMOGRAMA COMPLETO", "tipo": "Sangue/Lab", "tuss": "40309312", "preco": 80.0}, {"nome": "Eletroforese de Lipoproteinas", "tipo": "Sangue/Lab", "tuss": "40301788", "preco": 60.0}, {"nome": "Eletroforese de Proteínas SÉRICA OU URINÁRIA", "tipo": "Sangue/Lab", "tuss": "40301761", "preco": 55.0}, {"nome": "Eletroforese de Proteínas  (LÍQUOR)", "tipo": "Sangue/Lab", "tuss": "40309061", "preco": 100.0}, {"nome": "Exame a Fresco de Fezes", "tipo": "Sangue/Lab", "tuss": "40310019", "preco": 25.0}, {"nome": "Eletroforese de Hemoglobina", "tipo": "Sangue/Lab", "tuss": "40304353", "preco": 50.0}, {"nome": "Etanol SÉRICO", "tipo": "Sangue/Lab", "tuss": "40313140", "preco": 75.0}, {"nome": "Etanol URINARIO", "tipo": "Sangue/Lab", "tuss": "40313140", "preco": 60.0}, {"nome": "Fosforo SÉRICO", "tipo": "Sangue/Lab", "tuss": "40301931", "preco": 15.0}, {"nome": "Fosforo URINÁRIO (URINA 1 OU 24HS)", "tipo": "Sangue/Lab", "tuss": "40301931", "preco": 20.0}, {"nome": "Fosfatase Alcalina", "tipo": "Sangue/Lab", "tuss": "40301885", "preco": 20.0}, {"nome": "Fenobarbital", "tipo": "Sangue/Lab", "tuss": "40301834", "preco": 80.0}, {"nome": "Fenitoina", "tipo": "Sangue/Lab", "tuss": "40301826", "preco": 60.0}, {"nome": "Ferro Sérico", "tipo": "Sangue/Lab", "tuss": "40301842", "preco": 25.0}, {"nome": "Ferritina", "tipo": "Sangue/Lab", "tuss": "40316270", "preco": 35.0}, {"nome": "Fator RH E GRUPO SANGUINEO", "tipo": "Sangue/Lab", "tuss": "40304299", "preco": 30.0}, {"nome": "Fator Anti Nuclear", "tipo": "Sangue/Lab", "tuss": "40306852", "preco": 60.0}, {"nome": "FTA ABS - IGG", "tipo": "Sangue/Lab", "tuss": "40307735", "preco": 60.0}, {"nome": "FTA ABS - IGM", "tipo": "Sangue/Lab", "tuss": "40307743", "preco": 80.0}, {"nome": "Teste de Falcização", "tipo": "Sangue/Lab", "tuss": "40304132", "preco": 15.0}, {"nome": "Fator V Leiden por PCR RT", "tipo": "Sangue/Lab", "tuss": "40304175", "preco": 250.0}, {"nome": "Fator VIII, Dosagem do Antigeno de Von Willebrand", "tipo": "Sangue/Lab", "tuss": "40304191", "preco": 250.0}, {"nome": "Glicose", "tipo": "Sangue/Lab", "tuss": "40302040", "preco": 15.0}, {"nome": "Glicosúria", "tipo": "Sangue/Lab", "tuss": "40302040", "preco": 15.0}, {"nome": "Gama GT", "tipo": "Sangue/Lab", "tuss": "40301990", "preco": 20.0}, {"nome": "Glicemia Após Sebrecarga com Dextrosol", "tipo": "Sangue/Lab", "tuss": "40302032", "preco": 40.0}, {"nome": "Globulina Transportadora da Tiroxina (TBG)", "tipo": "Sangue/Lab", "tuss": "40316319", "preco": 120.0}, {"nome": "Globulina de Ligação de Hormônios Sexuais (SHBG)", "tipo": "Sangue/Lab", "tuss": "40316300", "preco": 90.0}, {"nome": "Genotipagem do Sistema HLA", "tipo": "Sangue/Lab", "tuss": "40306887", "preco": 160.0}, {"nome": "Hemograma", "tipo": "Sangue/Lab", "tuss": "40304361", "preco": 45.0}, {"nome": "HEMOGLOBINA", "tipo": "Sangue/Lab", "tuss": "40304345", "preco": 30.0}, {"nome": "Hemoglobina Glicada", "tipo": "Sangue/Lab", "tuss": "40302733", "preco": 50.0}, {"nome": "Hormônio Foliculo Estimulante (FSH)", "tipo": "Sangue/Lab", "tuss": "40316289", "preco": 40.0}, {"nome": "Hormônio Luteinizante (LH)", "tipo": "Sangue/Lab", "tuss": "40316335", "preco": 40.0}, {"nome": "Hepatite B - HBSAG", "tipo": "Sangue/Lab", "tuss": "40307018", "preco": 50.0}, {"nome": "Hepatite B - Anticorpos Anti HBS", "tipo": "Sangue/Lab", "tuss": "40306992", "preco": 60.0}, {"nome": "Hepatite B - Anti HBC IGG", "tipo": "Sangue/Lab", "tuss": "40306950", "preco": 65.0}, {"nome": "Hepatite B - Anti HBC IGM", "tipo": "Sangue/Lab", "tuss": "40306968", "preco": 70.0}, {"nome": "Hepatite C, Sorologia", "tipo": "Sangue/Lab", "tuss": "40307026", "preco": 70.0}, {"nome": "HIV1 +  HIV2", "tipo": "Sangue/Lab", "tuss": "40307182", "preco": 80.0}, {"nome": "Hepatite A - Anticorpos IGG", "tipo": "Sangue/Lab", "tuss": "40306933", "preco": 70.0}, {"nome": "Hepatite A - Anticorpos IGM", "tipo": "Sangue/Lab", "tuss": "40306941", "preco": 85.0}, {"nome": "Homocisteina SÉRICA", "tipo": "Sangue/Lab", "tuss": "40302113", "preco": 90.0}, {"nome": "Herpes Tipo 1 e 2 IGG", "tipo": "Sangue/Lab", "tuss": "40307085", "preco": 70.0}, {"nome": "Herpes Tipo 1 e 2 IGM", "tipo": "Sangue/Lab", "tuss": "40307093", "preco": 70.0}, {"nome": "Herpes Zoster (VARICELA) - IGG", "tipo": "Sangue/Lab", "tuss": "40307107", "preco": 100.0}, {"nome": "Herpes Zoster (VARICELA) - IGM", "tipo": "Sangue/Lab", "tuss": "40307115", "preco": 120.0}, {"nome": "17- Alfa Hidroxiprogesterona", "tipo": "Sangue/Lab", "tuss": "40316017", "preco": 85.0}, {"nome": "Hemocultura Automatizada", "tipo": "Sangue/Lab", "tuss": "40310256", "preco": 180.0}, {"nome": "Hemocultura por amostra", "tipo": "Sangue/Lab", "tuss": "40310248", "preco": 140.0}, {"nome": "Dosagem de Insulina sérica", "tipo": "Sangue/Lab", "tuss": "40316360", "preco": 35.0}, {"nome": "IGA", "tipo": "Sangue/Lab", "tuss": "40307220", "preco": 50.0}, {"nome": "IGG", "tipo": "Sangue/Lab", "tuss": "40307280", "preco": 50.0}, {"nome": "IGE total", "tipo": "Sangue/Lab", "tuss": "40307271", "preco": 50.0}, {"nome": "IGM", "tipo": "Sangue/Lab", "tuss": "40307301", "preco": 50.0}, {"nome": "IGE para Lactoalbumina", "tipo": "Sangue/Lab", "tuss": "40307263", "preco": 25.0}, {"nome": "Ige para Caseina", "tipo": "Sangue/Lab", "tuss": "40307263", "preco": 25.0}, {"nome": "IGE para Lactoglobulina", "tipo": "Sangue/Lab", "tuss": "40307263", "preco": 25.0}, {"nome": "Indice de Saturação da Transferrina", "tipo": "Sangue/Lab", "tuss": "40321231", "preco": 25.0}, {"nome": "Leptina", "tipo": "Sangue/Lab", "tuss": "40305422", "preco": 120.0}, {"nome": "Lipidograma - PDG", "tipo": "Sangue/Lab", "tuss": "40302750", "preco": 70.0}, {"nome": "Dosagem/pesquisa de Litio", "tipo": "Sangue/Lab", "tuss": "40302229", "preco": 50.0}, {"nome": "Lipase", "tipo": "Sangue/Lab", "tuss": "40302199", "preco": 25.0}, {"nome": "Magnésio sérico", "tipo": "Sangue/Lab", "tuss": "40302237", "preco": 25.0}, {"nome": "Hormônio Anti Mulleriano", "tipo": "Sangue/Lab", "tuss": "40316890", "preco": 350.0}, {"nome": "Mucoproteinas", "tipo": "Sangue/Lab", "tuss": "40302660", "preco": 40.0}, {"nome": "Metanefrinas Urinárias", "tipo": "Sangue/Lab", "tuss": "40311163", "preco": 180.0}, {"nome": "Microalbuminuria Urina Simples", "tipo": "Sangue/Lab", "tuss": "40311171", "preco": 30.0}, {"nome": "Microalbuminuria Urina 24 horas", "tipo": "Sangue/Lab", "tuss": "40311171", "preco": 30.0}, {"nome": "Microalbuminuria Urina 12 horas", "tipo": "Sangue/Lab", "tuss": "40311171", "preco": 30.0}, {"nome": "Mioglobina", "tipo": "Sangue/Lab", "tuss": "40302255", "preco": 60.0}, {"nome": "Potassio", "tipo": "Sangue/Lab", "tuss": "40302318", "preco": 15.0}, {"nome": "Progesterona", "tipo": "Sangue/Lab", "tuss": "40316408", "preco": 70.0}, {"nome": "Prolactina", "tipo": "Sangue/Lab", "tuss": "40316416", "preco": 55.0}, {"nome": "Proteina C Reativa", "tipo": "Sangue/Lab", "tuss": "40308391", "preco": 40.0}, {"nome": "Paratohormonio (PTH)", "tipo": "Sangue/Lab", "tuss": "40305465", "preco": 80.0}, {"nome": "Proteinas Totais e Frações", "tipo": "Sangue/Lab", "tuss": "40302385", "preco": 45.0}, {"nome": "Proteinas Totais", "tipo": "Sangue/Lab", "tuss": "40302377", "preco": 20.0}, {"nome": "Peptideo C", "tipo": "Sangue/Lab", "tuss": "40316394", "preco": 70.0}, {"nome": "Parasitologico", "tipo": "Sangue/Lab", "tuss": "40303110", "preco": 20.0}, {"nome": "Provas de Função Tireoideana (T3, T4, Indices e TSH)", "tipo": "Sangue/Lab", "tuss": "40305627", "preco": 100.0}, {"nome": "Perfil Reumatologico (ácido úrico, eletroforese de proteínas, fan, vhs, prova do látex p/ FR, w. rose)", "tipo": "Sangue/Lab", "tuss": "40312127", "preco": 200.0}, {"nome": "Prova Atividade de Febre Reumatica (aslo, eletroforese de proteínas, mucoproteínas e Proteína C reativa)", "tipo": "Sangue/Lab", "tuss": "40312143", "preco": 170.0}, {"nome": "Provas de Função Hepatica(bilirrubinas, eletroforese de proteínas, FAL, TGO, TGP e Gama-GT)", "tipo": "Sangue/Lab", "tuss": "40312151", "preco": 150.0}, {"nome": "BNP - Peptideo Natriuretico Cerebral", "tipo": "Sangue/Lab", "tuss": "40302776", "preco": 250.0}, {"nome": "Rubeola - IGG", "tipo": "Sangue/Lab", "tuss": "40307697", "preco": 60.0}, {"nome": "Rubeola - IGM", "tipo": "Sangue/Lab", "tuss": "40307700", "preco": 80.0}, {"nome": "Reticulócitos", "tipo": "Sangue/Lab", "tuss": "40304558", "preco": 15.0}, {"nome": "Rotavírus IGG", "tipo": "Sangue/Lab", "tuss": "40324443", "preco": 250.0}, {"nome": "Renina", "tipo": "Sangue/Lab", "tuss": "40316432", "preco": 60.0}, {"nome": "Urina 1 (rotina de urina)", "tipo": "Sangue/Lab", "tuss": "40311210", "preco": 25.0}, {"nome": "Sódio sérico", "tipo": "Sangue/Lab", "tuss": "40302423", "preco": 15.0}, {"nome": "Sangue Oculto nas Fezes", "tipo": "Sangue/Lab", "tuss": "40303136", "preco": 30.0}, {"nome": "Selenio sérico", "tipo": "Sangue/Lab", "tuss": "40313190", "preco": 110.0}, {"nome": "Sexagem fetal", "tipo": "Sangue/Lab", "tuss": "40312330", "preco": 180.0}, {"nome": "Sulfato de Dihidroepiandrosterona (S-DHEA)", "tipo": "Sangue/Lab", "tuss": "40316459", "preco": 80.0}, {"nome": "Somatomedina C (IGF-1)", "tipo": "Sangue/Lab", "tuss": "40316440", "preco": 60.0}, {"nome": "Substâncias Redutoras nas Fezes", "tipo": "Sangue/Lab", "tuss": "40303152", "preco": 80.0}, {"nome": "Sifilis - VDRL", "tipo": "Sangue/Lab", "tuss": "40307760", "preco": 25.0}, {"nome": "Sarampo IGG", "tipo": "Sangue/Lab", "tuss": "40308120", "preco": 70.0}, {"nome": "Sarampo IGM", "tipo": "Sangue/Lab", "tuss": "40308138", "preco": 80.0}, {"nome": "Sorologia para Penumococos (23 sorotipos)", "tipo": "Sangue/Lab", "tuss": "—", "preco": 550.0}, {"nome": "Triglicérides", "tipo": "Sangue/Lab", "tuss": "40302547", "preco": 25.0}, {"nome": "Transminase Glutamico Oxalacetica (TGO)", "tipo": "Sangue/Lab", "tuss": "40302504", "preco": 15.0}, {"nome": "Transminase Glutamico Piruvica (TGP)", "tipo": "Sangue/Lab", "tuss": "40302512", "preco": 15.0}, {"nome": "Transferrina", "tipo": "Sangue/Lab", "tuss": "40302520", "preco": 55.0}, {"nome": "T4 Livre", "tipo": "Sangue/Lab", "tuss": "40316491", "preco": 50.0}, {"nome": "T4 Total", "tipo": "Sangue/Lab", "tuss": "40316548", "preco": 50.0}, {"nome": "T3 Total", "tipo": "Sangue/Lab", "tuss": "40316556", "preco": 60.0}, {"nome": "T3 Livre", "tipo": "Sangue/Lab", "tuss": "40316467", "preco": 65.0}, {"nome": "T3 Reverso", "tipo": "Sangue/Lab", "tuss": "40316483", "preco": 150.0}, {"nome": "Tireoglobulina (AAT)", "tipo": "Sangue/Lab", "tuss": "40316530", "preco": 90.0}, {"nome": "Testosterona", "tipo": "Sangue/Lab", "tuss": "40316513", "preco": 20.0}, {"nome": "dosagem ou pesquisa Testosterona Livre", "tipo": "Sangue/Lab", "tuss": "40316505", "preco": 30.0}, {"nome": "Tempo de Protrombina", "tipo": "Sangue/Lab", "tuss": "40304590", "preco": 30.0}, {"nome": "Tempo de Tromboplastina Parcial Ativado", "tipo": "Sangue/Lab", "tuss": "40304639", "preco": 30.0}, {"nome": "Tireoestimulante, Hormônio TSH", "tipo": "Sangue/Lab", "tuss": "40316521", "preco": 40.0}, {"nome": "Teste de Tolerância a Lactose", "tipo": "Sangue/Lab", "tuss": "40302164", "preco": 90.0}, {"nome": "Dosagem/pesquisa de troponina", "tipo": "Sangue/Lab", "tuss": "40302571", "preco": 70.0}, {"nome": "Toxoplasmose - IGG", "tipo": "Sangue/Lab", "tuss": "40307824", "preco": 50.0}, {"nome": "Toxoplasmose - IGM", "tipo": "Sangue/Lab", "tuss": "40307832", "preco": 50.0}, {"nome": "Teste de Avidez Toxoplamose IgG", "tipo": "Sangue/Lab", "tuss": "40306461", "preco": 116.0}, {"nome": "Anticorpos Anti Transglutaminase IgA", "tipo": "Sangue/Lab", "tuss": "40308553", "preco": 75.0}, {"nome": "Anticorpos Anti Transglutaminase IgG", "tipo": "Sangue/Lab", "tuss": "40308561", "preco": 110.0}, {"nome": "Ureia urina", "tipo": "Sangue/Lab", "tuss": "40302580", "preco": 20.0}, {"nome": "Ureia sérica", "tipo": "Sangue/Lab", "tuss": "40302580", "preco": 20.0}, {"nome": "VHS - Velocidade de Hemossedimentação", "tipo": "Sangue/Lab", "tuss": "40304370", "preco": 35.0}, {"nome": "Vitamina B1", "tipo": "Sangue/Lab", "tuss": "40302784", "preco": 110.0}, {"nome": "Vitamina B3", "tipo": "Sangue/Lab", "tuss": "40302806", "preco": 440.0}, {"nome": "Vitamina B5", "tipo": "Sangue/Lab", "tuss": "40322262", "preco": 380.0}, {"nome": "Vitamina B6", "tipo": "Sangue/Lab", "tuss": "40302814", "preco": 100.0}, {"nome": "Vitamina B12", "tipo": "Sangue/Lab", "tuss": "40316572", "preco": 30.0}, {"nome": "Vitamina C", "tipo": "Sangue/Lab", "tuss": "40301060", "preco": 80.0}, {"nome": "Vitamina D3 (25 hidroxivitamina)", "tipo": "Sangue/Lab", "tuss": "40302830", "preco": 100.0}, {"nome": "Vitamina D (1,25 Dihidroxicolicalciferol)", "tipo": "Sangue/Lab", "tuss": "40305015", "preco": 90.0}, {"nome": "Vitamina A", "tipo": "Sangue/Lab", "tuss": "40302601", "preco": 100.0}, {"nome": "Vitamina E", "tipo": "Sangue/Lab", "tuss": "40302610", "preco": 100.0}, {"nome": "Waaler Rose", "tipo": "Sangue/Lab", "tuss": "40307867", "preco": 50.0}, {"nome": "Zinco sérico", "tipo": "Sangue/Lab", "tuss": "40304523", "preco": 50.0}, {"nome": "STREPV", "tipo": "Sangue/Lab", "tuss": "40310558", "preco": 90.0}, {"nome": "STREPA", "tipo": "Sangue/Lab", "tuss": "40310558", "preco": 90.0}, {"nome": "FATOR REUMATOIDE", "tipo": "Sangue/Lab", "tuss": "40308030", "preco": 35.0}, {"nome": "MICOLOGICO A FRESCO", "tipo": "Sangue/Lab", "tuss": "40310019", "preco": 40.0}, {"nome": "Clearence de Creatinina", "tipo": "Sangue/Lab", "tuss": "40301508", "preco": 35.0}, {"nome": "URICOSUMIA (Clearance de ácido úrico)", "tipo": "Sangue/Lab", "tuss": "40301494", "preco": 45.0}, {"nome": "Curva Insulinica 5 Tempos", "tipo": "Sangue/Lab", "tuss": "40305236", "preco": 90.0}, {"nome": "WESTERN BLOT (ANTICORPOS ANTI-HIV) - PESQUISA E/OU DOSAGEM", "tipo": "Sangue/Lab", "tuss": "40307875", "preco": 300.0}, {"nome": "Proteinuria - Urina 24hs", "tipo": "Sangue/Lab", "tuss": "40311180", "preco": 20.0}, {"nome": "Indice Creatinina/Proteina", "tipo": "Sangue/Lab", "tuss": "40322483", "preco": 55.0}, {"nome": "Albumina", "tipo": "Sangue/Lab", "tuss": "40301222", "preco": 15.0}, {"nome": "Teste rápido COVID19", "tipo": "Sangue/Lab", "tuss": "40322054", "preco": 150.0}, {"nome": "COVID19 - PCR RT", "tipo": "Sangue/Lab", "tuss": "40314618", "preco": 350.0}, {"nome": "Serotonina", "tipo": "Sangue/Lab", "tuss": "40321550", "preco": 90.0}, {"nome": "SOROLOGIA COVID IGG/IGM", "tipo": "Sangue/Lab", "tuss": "40314619", "preco": 250.0}, {"nome": "ANTICORPOS TOTAIS COVID19", "tipo": "Sangue/Lab", "tuss": "40314620", "preco": 120.0}, {"nome": "ZIKA VIRUS IGG", "tipo": "Sangue/Lab", "tuss": "40324591", "preco": 400.0}, {"nome": "ZIKA VIRUS IGM", "tipo": "Sangue/Lab", "tuss": "40324605", "preco": 400.0}, {"nome": "CTX1", "tipo": "Sangue/Lab", "tuss": "40317340", "preco": 180.0}, {"nome": "ABDOME TOTAL E SUPERIOR", "tipo": "Imagem", "tuss": "—", "preco": 230.0}, {"nome": "MAMAS", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "PÉLVICO FEMININO E TRANSVAGINAL", "tipo": "Imagem", "tuss": "—", "preco": 150.0}, {"nome": "PRÓSTATA VIA ABDOMINAL", "tipo": "Imagem", "tuss": "—", "preco": 110.0}, {"nome": "RINS E VIAS OU APARELHO URINÁRIO FEMININO E MASCULINO", "tipo": "Imagem", "tuss": "—", "preco": 160.0}, {"nome": "CERVICAL OU TIREOIDE", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "PARTES MOLES", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "REGIÃO INGUINAL", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "PARADE ABDOMINAL", "tipo": "Imagem", "tuss": "—", "preco": 160.0}, {"nome": "OBSTÉTRICO INICIAL", "tipo": "Imagem", "tuss": "—", "preco": 140.0}, {"nome": "OBSTÉTRICO NORMAL", "tipo": "Imagem", "tuss": "—", "preco": 140.0}, {"nome": "CERVICAL E TIREOIDE", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "OMBRO", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "COTOVELO", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "BRAÇO OU ANTEBRAÇO OU PUNHO OU MÃO", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "TORNOZELO, CALCANEO E PÉ", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "COXA E PANTURRILHA", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "QUADRIL – ADULTO", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "JOELHO", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "PESCOÇO", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "PELE E SUBCUTÂNEO", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "ABDOME TOTAL SUPERIOR E INFERIOR", "tipo": "Imagem", "tuss": "—", "preco": 230.0}, {"nome": "PÉLVICO FEMININO E TRANSVAGINAL", "tipo": "Imagem", "tuss": "—", "preco": 150.0}, {"nome": "PRÓSTATA VIA ABDOMINAL", "tipo": "Imagem", "tuss": "—", "preco": 110.0}, {"nome": "PRÓSTATA ABDOME INFERIOR MASCULINO", "tipo": "Imagem", "tuss": "—", "preco": 110.0}, {"nome": "RINS E VIAS OU APARELHO URINARIO FEMININO E MASCULINO", "tipo": "Imagem", "tuss": "—", "preco": 160.0}, {"nome": "CERVICAL OU TIREOIDE", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "TESTICULOS E BOLSA ESCROTAL", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "MAMAS ( SEM RESTRIÇÃO DE MAMAS)", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "PARTES MOLES", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "REGIÃO INGUINAL", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "PAREDE ABDOMINAL", "tipo": "Imagem", "tuss": "—", "preco": 160.0}, {"nome": "CRÂNIO/FONTENELA (moleira de bebê)", "tipo": "Imagem", "tuss": "—", "preco": 150.0}, {"nome": "SUPERFICIAIS: CERVICAL/AXILA/MÚSCULO/TENDÃO", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "GLÂNDULA SALIVAR/PARÓTIDAS", "tipo": "Imagem", "tuss": "—", "preco": 160.0}, {"nome": "OBSTÉTRICO INICIAL", "tipo": "Imagem", "tuss": "—", "preco": 140.0}, {"nome": "OBSTÉTRICO NORMAL", "tipo": "Imagem", "tuss": "—", "preco": 140.0}, {"nome": "OBSTÉTRICO GEMELAR", "tipo": "Imagem", "tuss": "—", "preco": 240.0}, {"nome": "CERVICAL OU TIREOIDE", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "TESTICULOS E BOLSA ESCROTAL", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "OBSTÉTRICO GEMELAR", "tipo": "Imagem", "tuss": "—", "preco": 240.0}, {"nome": "TRANSFONTENELA", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "VENOSO DE MEMBRO INFERIOR", "tipo": "Imagem", "tuss": "—", "preco": 360.0}, {"nome": "VENOSO E ARTERIAL DE MEMBRO INFERIOR", "tipo": "Imagem", "tuss": "—", "preco": 720.0}, {"nome": "VENOSO E ARTERIAL DE MEMBRO SUPERIOR", "tipo": "Imagem", "tuss": "—", "preco": 720.0}, {"nome": "VENOSO DE MEMBRO SUPERIOR", "tipo": "Imagem", "tuss": "—", "preco": 360.0}, {"nome": "CARÓTIDAS E VERTEBRAIS", "tipo": "Imagem", "tuss": "—", "preco": 800.0}, {"nome": "ABDOME TOTAL / SUPERIOR INFERIOR", "tipo": "Imagem", "tuss": "—", "preco": 230.0}, {"nome": "PAREDE ABDOMINAL", "tipo": "Imagem", "tuss": "—", "preco": 160.0}, {"nome": "RINS E VIAS / APARELHO URINÁRIO MASCULINO E FEMININO", "tipo": "Imagem", "tuss": "—", "preco": 160.0}, {"nome": "BOLSA ESCROTAL (COM/SEM DOPPLER)", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "PRÓSTATA /ABDOME INFERIOR MASCULINO", "tipo": "Imagem", "tuss": "—", "preco": 110.0}, {"nome": "TIREÓIDE", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "TRANSVAGINAL (COM/SEM DOPPLER)", "tipo": "Imagem", "tuss": "—", "preco": 150.0}, {"nome": "GLANDULAS SALIVÁRES", "tipo": "Imagem", "tuss": "—", "preco": 160.0}, {"nome": "MAMAS", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "ORGÃOS SUPERFICIAIS (TIREOIDE, ESCROTO, PÊNIS, CRÂNIO)", "tipo": "Imagem", "tuss": "—", "preco": 120.0}, {"nome": "GLÂNDULA SALIVAR/PARÓTIDAS", "tipo": "Imagem", "tuss": "—", "preco": 160.0}, {"nome": "PRÓSTATA (VIA ABDOMINAL / TRANSRETAL)", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "PARTES MOLES", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "PÉLVICO/ABDOME INFERIOR FEMININO", "tipo": "Imagem", "tuss": "—", "preco": 150.0}, {"nome": "CERVICAL", "tipo": "Imagem", "tuss": "—", "preco": 190.0}, {"nome": "JOELHO", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "OMBRO", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "PESCOÇO", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "- OBSTÉTRICA INICIAL", "tipo": "Imagem", "tuss": "—", "preco": 140.0}, {"nome": "- OBSTÉTRICA NORMAL", "tipo": "Imagem", "tuss": "—", "preco": 140.0}, {"nome": "- OBSTÉTRICA 1 TRIMESTRE (ENDOVAGINAL)", "tipo": "Imagem", "tuss": "—", "preco": 140.0}, {"nome": "TC CRANIO ORBITA OU SELAS TURSICAS", "tipo": "Imagem", "tuss": "—", "preco": 440.0}, {"nome": "TC ABDOME TOTAL", "tipo": "Imagem", "tuss": "—", "preco": 800.0}, {"nome": "TC ABDOME SUPERIOR", "tipo": "Imagem", "tuss": "—", "preco": 600.0}, {"nome": "TC ARTICULAÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 440.0}, {"nome": "TC COLUNA LOMBAR DORSAL CERVICAL", "tipo": "Imagem", "tuss": "—", "preco": 400.0}, {"nome": "TC MASTOIDES OU OUVIDOS", "tipo": "Imagem", "tuss": "—", "preco": 440.0}, {"nome": "TC PELVE OU BACIA", "tipo": "Imagem", "tuss": "—", "preco": 440.0}, {"nome": "TC SEGMENTOS BRAÇO ANTEBRAÇOS ETC", "tipo": "Imagem", "tuss": "—", "preco": 440.0}, {"nome": "TC TORAX", "tipo": "Imagem", "tuss": "—", "preco": 600.0}, {"nome": "TC FACE OU SEIOS DA FACE OU ARTICULAÇÃO TEMPORAL", "tipo": "Imagem", "tuss": "—", "preco": 440.0}, {"nome": "TC MANDIBULA", "tipo": "Imagem", "tuss": "—", "preco": 755.0}, {"nome": "TC PESCOÇO", "tipo": "Imagem", "tuss": "—", "preco": 905.0}, {"nome": "ANTEBRAÇO DIREITO OU ESQUERDO 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "ARCOS COSTAIS OU HEMITORAX 1 OU 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 130.0}, {"nome": "ARTICULAÇÃO SACO ILICA", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "ARTICULAÇÃO TEMPORO MANDIBULAR BILATERAL", "tipo": "Imagem", "tuss": "—", "preco": 170.0}, {"nome": "ARTICULÇÃO TIBIA TARSICA", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "BACIA E QUADRIL 1 OU 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "BRAÇO DIREITO E ESQUERDO 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "CALCANEO DIREITO OU ESQUERDO 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "CAVUM 1 OU 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "CLAVICULA DIREITA OU ESQUERDA 1 OU 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "COLUNA CERVICAL 2 OU 3 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "COLUNA CERVICAL 4 OU 5 POSIÇÕES OBLIQUAS", "tipo": "Imagem", "tuss": "—", "preco": 130.0}, {"nome": "COLUNA DORSAL 1 A 4 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 150.0}, {"nome": "COLUNA LOMBO SACRA 1 A 3 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "COLUNA LOMBO SACRA 4 OU 5 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 170.0}, {"nome": "COLUNA LOMBO SACRA 7 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 200.0}, {"nome": "COTOVELO DIREITO OU ESQUERDO 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "COXA DIREITA OU ESQUERDA 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "CRANIO 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 120.0}, {"nome": "CRANIO 3 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 130.0}, {"nome": "CRANIO 4 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 150.0}, {"nome": "ESCAPULA OU OMBRO DIREITO OU ESQUERDO 1 OU 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "FEMUR DIREITO OU ESQUERDO 1 ATÉ 4 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 120.0}, {"nome": "COXO FEMURAL", "tipo": "Imagem", "tuss": "—", "preco": 120.0}, {"nome": "JOELHO DIREITO OU ESQUERDO 1 OU 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "JOELHO DIREITO OU ESQUERDO 3 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "MÃO DIREITA OU ESQUERDA 1 OU 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "MASTOIDE DIREITA OU ESQUERDA OU BILATERAL", "tipo": "Imagem", "tuss": "—", "preco": 110.0}, {"nome": "OMOPLATA", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "OSSOS DA FACE OU NARIZ 1 ATÉ 4 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 130.0}, {"nome": "PERNA DIREITA OU ESQUERDA 1 OU 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "PUNHO DIREITO OU ESQUERDO 1 ATÉ 4 POSIÇOES", "tipo": "Imagem", "tuss": "—", "preco": 120.0}, {"nome": "SEIOS DA FACE 1 ATÉ 3 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "SEIOS DA FACE 4 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 130.0}, {"nome": "SELA TURSICA", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "TORAX 1 OU 2 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 90.0}, {"nome": "TORAX 3 OU 4 POSIÇÕES", "tipo": "Imagem", "tuss": "—", "preco": 150.0}, {"nome": "ECOCARDIO  STRESS FARMACOLOGICO - PAGAMENTO SOMENTE EM DINHEIRO", "tipo": "Imagem", "tuss": "—", "preco": 600.0}, {"nome": "ECOCARDIO TRANS ESOFAGICO TRANSTORACICO -  PAGAMENTO SOMENTE EM DINHEIRO", "tipo": "Imagem", "tuss": "—", "preco": 700.0}, {"nome": "ECOCARDIO TRANSTORACICO  - PAGAMENTO SOMENTE EM DINHEIRO", "tipo": "Imagem", "tuss": "—", "preco": 350.0}, {"nome": "ECG ATÉ 12 DERIVAÇÕES - PAGAMENTO SOMENTE EM DINHEIRO", "tipo": "Imagem", "tuss": "—", "preco": 100.0}, {"nome": "MAPA - PAGAMENTO SOMENTE EM DINHEIRO", "tipo": "Imagem", "tuss": "—", "preco": 150.0}, {"nome": "HOLTER - PAGAMENTO SOMENTE EM DINHEIRO", "tipo": "Imagem", "tuss": "—", "preco": 250.0}, {"nome": "CITOLOGIA ONCOTICA (PAPA NICOLAU) - PAGAMENTO SOMENTE EM DINHEIRO", "tipo": "Imagem", "tuss": "—", "preco": 140.0}];
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LÓGICA DA APLICAÇÃO
+       ═══════════════════════════════════════════════════════ -->
   <script>
-    const EXAMES = [{"nome": "Acido Urico", "slug": "acido-urico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301150", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Acido Folico", "slug": "acido-folico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301087", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Aluminio", "slug": "aluminio", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301273", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Amilase", "slug": "amilase", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301281", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Aslo (anti-estreptolisina)", "slug": "aslo-anti-estreptolisina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306445", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Ácido Valproico", "slug": "acido-valproico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301168", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Aldolase", "slug": "aldolase", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301230", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Aldosterona (urina)", "slug": "aldosterona-urina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316050", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Aldosterona (soro)", "slug": "aldosterona-soro", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316050", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Alfa Fetoproteina", "slug": "alfa-fetoproteina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316068", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Alfa 1 Glicoproteina Ácida", "slug": "alfa-1-glicoproteina-acida", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301257", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Androstenediona", "slug": "androstenediona", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316076", "preco": 45, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antidesoxiribonuclease b", "slug": "antidesoxiribonuclease-b", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307930", "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anticorpos Anti Tireoglobulina", "slug": "anticorpos-anti-tireoglobulina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316106", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anticorpos Anti Microssomal", "slug": "anticorpos-anti-microssomal", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306348", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antigeno Prostático Específico", "slug": "antigeno-prostatico-especifico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316149", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antigeno Prostático Específico Total e Livre", "slug": "antigeno-prostatico-especifico-total-e-livre", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316130", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antigeno Carcinoembriogenico (CEA)", "slug": "antigeno-carcinoembriogenico-cea", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316122", "preco": 55, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anticorpos Anti Cardiolipina IGG", "slug": "anticorpos-anti-cardiolipina-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306143", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anticorpos Anti Cardiolipina IGM", "slug": "anticorpos-anti-cardiolipina-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306151", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anticorpos Anti Cardiolipina IGA", "slug": "anticorpos-anti-cardiolipina-iga", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306135", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anticorpo anti-receptor de TSH (RESTH)", "slug": "anticorpo-anti-receptor-de-tsh-resth", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316084", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antiperoxidase Tireoideana", "slug": "antiperoxidase-tireoideana", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306437", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antigliadina - IGM", "slug": "antigliadina-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306321", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antigliadina - IGA", "slug": "antigliadina-iga", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306305", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antigliadina - IGG", "slug": "antigliadina-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306313", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antimusculo Liso", "slug": "antimusculo-liso", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306399", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anti RNP", "slug": "anti-rnp", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306100", "preco": 55, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anti Ro/SSA", "slug": "anti-ro-ssa", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306119", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anti LA/SSB", "slug": "anti-la-ssb", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306089", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anti SM", "slug": "anti-sm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306127", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antitrombina III", "slug": "antitrombina-iii", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304060", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Antibiograma (QUALQUER MATERIAL)", "slug": "antibiograma-qualquer-material", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310426", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anticoagulante Lupico", "slug": "anticoagulante-lupico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304019", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Adrenocorticotrofico (ACTH)", "slug": "adrenocorticotrofico-acth", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316041", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anal Swab (cultura+antibiograma)", "slug": "anal-swab-cultura-antibiograma", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40303020", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Bilirrubina totais e frações", "slug": "bilirrubina-totais-e-fracoes", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301397", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Biotina", "slug": "biotina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40322122", "preco": 300, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "BHCG, Dosagem Qualitativa", "slug": "bhcg-dosagem-qualitativa", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316327", "preco": 35, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "BHCG Quantitativo Sangue", "slug": "bhcg-quantitativo-sangue", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40305767", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Beta 2 Microglobulina (urina)", "slug": "beta-2-microglobulina-urina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306470", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Beta 2 Microglobulina (soro)", "slug": "beta-2-microglobulina-soro", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306470", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Bacterioscopia", "slug": "bacterioscopia", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310060", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Calprotectina", "slug": "calprotectina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40323986", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cariotipo Técnicas com Bandas G(Sangue- Constitucional)", "slug": "cariotipo-tecnicas-com-bandas-g-sangue-constitucional", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40501051", "preco": 550, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Coagulograma", "slug": "coagulograma", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304922", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Creatinina", "slug": "creatinina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301630", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Colesterol Total", "slug": "colesterol-total", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301605", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Colesterol HDL", "slug": "colesterol-hdl", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301583", "preco": 10, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Colesterol LDL", "slug": "colesterol-ldl", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301591", "preco": 10, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Colesterol VLDL", "slug": "colesterol-vldl", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302695", "preco": 10, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Calcio Total, Soro", "slug": "calcio-total-soro", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301400", "preco": 14, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Calcio Ionico", "slug": "calcio-ionico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301419", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Carbamazepina", "slug": "carbamazepina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301435", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Capacidade de Fixação de Ferro", "slug": "capacidade-de-fixacao-de-ferro", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301427", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cloro sérico", "slug": "cloro-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301559", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Coombs Direto", "slug": "coombs-direto", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304108", "preco": 18, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Coombs Indireto", "slug": "coombs-indireto", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304884", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Creatinofosfoquinase (CPK)", "slug": "creatinofosfoquinase-cpk", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301648", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Creatinofosfoquinase Fração MB (CKMB)", "slug": "creatinofosfoquinase-fracao-mb-ckmb", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301664", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Crescimento do Hormônio HGH", "slug": "crescimento-do-hormonio-hgh", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316203", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cortisol, Soro", "slug": "cortisol-soro", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316190", "preco": 35, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cortisol, Salivar (cada coleta)", "slug": "cortisol-salivar-cada-coleta", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316190", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Citologia Oncotica (liquidos e secreções)", "slug": "citologia-oncotica-liquidos-e-secrecoes", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40601137", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Citomegalovirus, Anticorpos IGG", "slug": "citomegalovirus-anticorpos-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306666", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Citomegalovirus, Anticorpos IGM", "slug": "citomegalovirus-anticorpos-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306674", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "CA 125", "slug": "ca-125", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316378", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "CA 199", "slug": "ca-199", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316378", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Chagas - IGG Imunofluorescencia", "slug": "chagas-igg-imunofluorescencia", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306615", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Chagas -IGM Imunofluorescencia", "slug": "chagas-igm-imunofluorescencia", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306623", "preco": 45, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Chagas (Machado Guerreiro)", "slug": "chagas-machado-guerreiro", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307972", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Chlamydia - IGM", "slug": "chlamydia-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306640", "preco": 75, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Chlamydia - IGG", "slug": "chlamydia-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306631", "preco": 75, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Caxumba - IGG", "slug": "caxumba-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306593", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Caxumba - IGM", "slug": "caxumba-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306607", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cromo (soro e urina)", "slug": "cromo-soro-e-urina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40313310", "preco": 55, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Chumbo urina", "slug": "chumbo-urina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40313107", "preco": 65, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Chumbo sérico", "slug": "chumbo-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40313107", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Curva Glicêmica (4 Dosagens)", "slug": "curva-glicemica-4-dosagens", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301680", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Curva Glicêmica (6 Dosagens)", "slug": "curva-glicemica-6-dosagens", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40305228", "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Complemento C2", "slug": "complemento-c2", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306690", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Complemento C3", "slug": "complemento-c3", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306704", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Complemento C4", "slug": "complemento-c4", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306712", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Complemento CH-50", "slug": "complemento-ch-50", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306747", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cultura de Fezes ( Coprocultura )", "slug": "cultura-de-fezes-coprocultura", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310175", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cultura para Fungos", "slug": "cultura-para-fungos", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310140", "preco": 170, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cultura de Urina (urocultura)", "slug": "cultura-de-urina-urocultura", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310213", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cultura de Urina (urocultura) + antibiograma", "slug": "cultura-de-urina-urocultura-antibiograma", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310213", "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "CULTURA DE MATERIAIS DIVERSOS + antibiograma", "slug": "cultura-de-materiais-diversos-antibiograma", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310124", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Cobre sérico", "slug": "cobre-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301567", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Desidrogenase Lactica", "slug": "desidrogenase-lactica", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301729", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dihidrotestosterona", "slug": "dihidrotestosterona", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316220", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dihidroepiandrosterona (DHEA)", "slug": "dihidroepiandrosterona-dhea", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316211", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dimero D", "slug": "dimero-d", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304906", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dengue - IGM Anticorpo", "slug": "dengue-igm-anticorpo", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306798", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dengue - IGG Anticorpo", "slug": "dengue-igg-anticorpo", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306798", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "DENGUE ANTIGENO NS1 - teste rápido", "slug": "dengue-antigeno-ns1-teste-rapido", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40324192", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dengue Teste Rápido - IGG", "slug": "dengue-teste-rapido-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40324559", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dengue Teste Rápido - IGM", "slug": "dengue-teste-rapido-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40324567", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anti Endomísio IgG", "slug": "anti-endomisio-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306259", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anti Endomísio IgM", "slug": "anti-endomisio-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306259", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anti Endomísio IgA", "slug": "anti-endomisio-iga", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306259", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Estradiol", "slug": "estradiol", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316246", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Estrona", "slug": "estrona", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316262", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "ESPERMOGRAMA COMPLETO", "slug": "espermograma-completo", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40309312", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Eletroforese de Lipoproteinas", "slug": "eletroforese-de-lipoproteinas", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301788", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Eletroforese de Proteínas SÉRICA OU URINÁRIA", "slug": "eletroforese-de-proteinas-serica-ou-urinaria", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301761", "preco": 55, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Eletroforese de Proteínas (LÍQUOR)", "slug": "eletroforese-de-proteinas-liquor", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40309061", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Exame a Fresco de Fezes", "slug": "exame-a-fresco-de-fezes", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310019", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Eletroforese de Hemoglobina", "slug": "eletroforese-de-hemoglobina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304353", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Etanol SÉRICO", "slug": "etanol-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40313140", "preco": 75, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Etanol URINARIO", "slug": "etanol-urinario", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40313140", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Fosforo SÉRICO", "slug": "fosforo-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301931", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Fosforo URINÁRIO (URINA 1 OU 24HS)", "slug": "fosforo-urinario-urina-1-ou-24hs", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301931", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Fosfatase Alcalina", "slug": "fosfatase-alcalina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301885", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Fenobarbital", "slug": "fenobarbital", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301834", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Fenitoina", "slug": "fenitoina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301826", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Ferro Sérico", "slug": "ferro-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301842", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Ferritina", "slug": "ferritina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316270", "preco": 35, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Fator RH E GRUPO SANGUINEO", "slug": "fator-rh-e-grupo-sanguineo", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304299", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Fator Anti Nuclear", "slug": "fator-anti-nuclear", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306852", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "FTA ABS - IGG", "slug": "fta-abs-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307735", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "FTA ABS - IGM", "slug": "fta-abs-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307743", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Teste de Falcização", "slug": "teste-de-falcizacao", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304132", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Fator V Leiden por PCR RT", "slug": "fator-v-leiden-por-pcr-rt", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304175", "preco": 250, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Fator VIII, Dosagem do Antigeno de Von Willebrand", "slug": "fator-viii-dosagem-do-antigeno-de-von-willebrand", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304191", "preco": 250, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Glicose", "slug": "glicose", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302040", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Glicosúria", "slug": "glicosuria", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302040", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Gama GT", "slug": "gama-gt", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301990", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Glicemia Após Sebrecarga com Dextrosol", "slug": "glicemia-apos-sebrecarga-com-dextrosol", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302032", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Globulina Transportadora da Tiroxina (TBG)", "slug": "globulina-transportadora-da-tiroxina-tbg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316319", "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Globulina de Ligação de Hormônios Sexuais (SHBG)", "slug": "globulina-de-ligacao-de-hormonios-sexuais-shbg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316300", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Genotipagem do Sistema HLA", "slug": "genotipagem-do-sistema-hla", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306887", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hemograma", "slug": "hemograma", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304361", "preco": 45, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "HEMOGLOBINA", "slug": "hemoglobina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304345", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hemoglobina Glicada", "slug": "hemoglobina-glicada", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302733", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hormônio Foliculo Estimulante (FSH)", "slug": "hormonio-foliculo-estimulante-fsh", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316289", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hormônio Luteinizante (LH)", "slug": "hormonio-luteinizante-lh", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316335", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hepatite B - HBSAG", "slug": "hepatite-b-hbsag", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307018", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hepatite B - Anticorpos Anti HBS", "slug": "hepatite-b-anticorpos-anti-hbs", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306992", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hepatite B - Anti HBC IGG", "slug": "hepatite-b-anti-hbc-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306950", "preco": 65, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hepatite B - Anti HBC IGM", "slug": "hepatite-b-anti-hbc-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306968", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hepatite C, Sorologia", "slug": "hepatite-c-sorologia", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307026", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "HIV1 + HIV2", "slug": "hiv1-hiv2", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307182", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hepatite A - Anticorpos IGG", "slug": "hepatite-a-anticorpos-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306933", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hepatite A - Anticorpos IGM", "slug": "hepatite-a-anticorpos-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306941", "preco": 85, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Homocisteina SÉRICA", "slug": "homocisteina-serica", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302113", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Herpes Tipo 1 e 2 IGG", "slug": "herpes-tipo-1-e-2-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307085", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Herpes Tipo 1 e 2 IGM", "slug": "herpes-tipo-1-e-2-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307093", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Herpes Zoster (VARICELA) - IGG", "slug": "herpes-zoster-varicela-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307107", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Herpes Zoster (VARICELA) - IGM", "slug": "herpes-zoster-varicela-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307115", "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "17- Alfa Hidroxiprogesterona", "slug": "17-alfa-hidroxiprogesterona", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316017", "preco": 85, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hemocultura Automatizada", "slug": "hemocultura-automatizada", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310256", "preco": 180, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hemocultura por amostra", "slug": "hemocultura-por-amostra", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310248", "preco": 140, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dosagem de Insulina sérica", "slug": "dosagem-de-insulina-serica", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316360", "preco": 35, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "IGA", "slug": "iga", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307220", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "IGG", "slug": "igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307280", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "IGE total", "slug": "ige-total", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307271", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "IGM", "slug": "igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307301", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "IGE para Lactoalbumina", "slug": "ige-para-lactoalbumina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307263", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Ige para Caseina", "slug": "ige-para-caseina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307263", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "IGE para Lactoglobulina", "slug": "ige-para-lactoglobulina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307263", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Indice de Saturação da Transferrina", "slug": "indice-de-saturacao-da-transferrina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40321231", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Leptina", "slug": "leptina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40305422", "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Lipidograma - PDG", "slug": "lipidograma-pdg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302750", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dosagem/pesquisa de Litio", "slug": "dosagem-pesquisa-de-litio", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302229", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Lipase", "slug": "lipase", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302199", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Magnésio sérico", "slug": "magnesio-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302237", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Hormônio Anti Mulleriano", "slug": "hormonio-anti-mulleriano", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316890", "preco": 350, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Mucoproteinas", "slug": "mucoproteinas", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302660", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Metanefrinas Urinárias", "slug": "metanefrinas-urinarias", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40311163", "preco": 180, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Microalbuminuria Urina Simples", "slug": "microalbuminuria-urina-simples", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40311171", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Microalbuminuria Urina 24 horas", "slug": "microalbuminuria-urina-24-horas", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40311171", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Microalbuminuria Urina 12 horas", "slug": "microalbuminuria-urina-12-horas", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40311171", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Mioglobina", "slug": "mioglobina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302255", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Potassio", "slug": "potassio", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302318", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Progesterona", "slug": "progesterona", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316408", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Prolactina", "slug": "prolactina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316416", "preco": 55, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Proteina C Reativa", "slug": "proteina-c-reativa", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40308391", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Paratohormonio (PTH)", "slug": "paratohormonio-pth", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40305465", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Proteinas Totais e Frações", "slug": "proteinas-totais-e-fracoes", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302385", "preco": 45, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Proteinas Totais", "slug": "proteinas-totais", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302377", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Peptideo C", "slug": "peptideo-c", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316394", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Parasitologico", "slug": "parasitologico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40303110", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Provas de Função Tireoideana (T3, T4, Indices e TSH)", "slug": "provas-de-funcao-tireoideana-t3-t4-indices-e-tsh", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40305627", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Perfil Reumatologico (ácido úrico, eletroforese de proteínas, fan, vhs, prova do látex p/ FR, w. rose)", "slug": "perfil-reumatologico-acido-urico-eletroforese-de-proteinas-fan-vhs-prova-do-latex-p-fr-w-rose", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40312127", "preco": 200, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Prova Atividade de Febre Reumatica (aslo, eletroforese de proteínas, mucoproteínas e Proteína C reativa)", "slug": "prova-atividade-de-febre-reumatica-aslo-eletroforese-de-proteinas-mucoproteinas-e-proteina-c-reativa", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40312143", "preco": 170, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Provas de Função Hepatica(bilirrubinas, eletroforese de proteínas, FAL, TGO, TGP e Gama-GT)", "slug": "provas-de-funcao-hepatica-bilirrubinas-eletroforese-de-proteinas-fal-tgo-tgp-e-gama-gt", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40312151", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "BNP - Peptideo Natriuretico Cerebral", "slug": "bnp-peptideo-natriuretico-cerebral", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302776", "preco": 250, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Rubeola - IGG", "slug": "rubeola-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307697", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Rubeola - IGM", "slug": "rubeola-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307700", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Reticulócitos", "slug": "reticulocitos", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304558", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Rotavírus IGG", "slug": "rotavirus-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40324443", "preco": 250, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Renina", "slug": "renina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316432", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Urina 1 (rotina de urina)", "slug": "urina-1-rotina-de-urina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40311210", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Sódio sérico", "slug": "sodio-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302423", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Sangue Oculto nas Fezes", "slug": "sangue-oculto-nas-fezes", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40303136", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Selenio sérico", "slug": "selenio-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40313190", "preco": 110, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Sexagem fetal", "slug": "sexagem-fetal", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40312330", "preco": 180, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Sulfato de Dihidroepiandrosterona (S-DHEA)", "slug": "sulfato-de-dihidroepiandrosterona-s-dhea", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316459", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Somatomedina C (IGF-1)", "slug": "somatomedina-c-igf-1", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316440", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Substâncias Redutoras nas Fezes", "slug": "substancias-redutoras-nas-fezes", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40303152", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Sifilis - VDRL", "slug": "sifilis-vdrl", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307760", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Sarampo IGG", "slug": "sarampo-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40308120", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Sarampo IGM", "slug": "sarampo-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40308138", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Sorologia para Penumococos (23 sorotipos)", "slug": "sorologia-para-penumococos-23-sorotipos", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": null, "preco": 550, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Triglicérides", "slug": "triglicerides", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302547", "preco": 25, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Transminase Glutamico Oxalacetica (TGO)", "slug": "transminase-glutamico-oxalacetica-tgo", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302504", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Transminase Glutamico Piruvica (TGP)", "slug": "transminase-glutamico-piruvica-tgp", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302512", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Transferrina", "slug": "transferrina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302520", "preco": 55, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "T4 Livre", "slug": "t4-livre", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316491", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "T4 Total", "slug": "t4-total", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316548", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "T3 Total", "slug": "t3-total", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316556", "preco": 60, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "T3 Livre", "slug": "t3-livre", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316467", "preco": 65, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "T3 Reverso", "slug": "t3-reverso", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316483", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Tireoglobulina (AAT)", "slug": "tireoglobulina-aat", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316530", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Testosterona", "slug": "testosterona", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316513", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "dosagem ou pesquisa Testosterona Livre", "slug": "dosagem-ou-pesquisa-testosterona-livre", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316505", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Tempo de Protrombina", "slug": "tempo-de-protrombina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304590", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Tempo de Tromboplastina Parcial Ativado", "slug": "tempo-de-tromboplastina-parcial-ativado", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304639", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Tireoestimulante, Hormônio TSH", "slug": "tireoestimulante-hormonio-tsh", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316521", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Teste de Tolerância a Lactose", "slug": "teste-de-tolerancia-a-lactose", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302164", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Dosagem/pesquisa de troponina", "slug": "dosagem-pesquisa-de-troponina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302571", "preco": 70, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Toxoplasmose - IGG", "slug": "toxoplasmose-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307824", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Toxoplasmose - IGM", "slug": "toxoplasmose-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307832", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Teste de Avidez Toxoplamose IgG", "slug": "teste-de-avidez-toxoplamose-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40306461", "preco": 116, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anticorpos Anti Transglutaminase IgA", "slug": "anticorpos-anti-transglutaminase-iga", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40308553", "preco": 75, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Anticorpos Anti Transglutaminase IgG", "slug": "anticorpos-anti-transglutaminase-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40308561", "preco": 110, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Ureia urina", "slug": "ureia-urina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302580", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Ureia sérica", "slug": "ureia-serica", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302580", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "VHS - Velocidade de Hemossedimentação", "slug": "vhs-velocidade-de-hemossedimentacao", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304370", "preco": 35, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina B1", "slug": "vitamina-b1", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302784", "preco": 110, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina B3", "slug": "vitamina-b3", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302806", "preco": 440, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina B5", "slug": "vitamina-b5", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40322262", "preco": 380, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina B6", "slug": "vitamina-b6", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302814", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina B12", "slug": "vitamina-b12", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40316572", "preco": 30, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina C", "slug": "vitamina-c", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301060", "preco": 80, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina D3 (25 hidroxivitamina)", "slug": "vitamina-d3-25-hidroxivitamina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302830", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina D (1,25 Dihidroxicolicalciferol)", "slug": "vitamina-d-1-25-dihidroxicolicalciferol", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40305015", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina A", "slug": "vitamina-a", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302601", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Vitamina E", "slug": "vitamina-e", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40302610", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Waaler Rose", "slug": "waaler-rose", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307867", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Zinco sérico", "slug": "zinco-serico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40304523", "preco": 50, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "STREPV", "slug": "strepv", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310558", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "STREPA", "slug": "strepa", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310558", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "FATOR REUMATOIDE", "slug": "fator-reumatoide", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40308030", "preco": 35, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "MICOLOGICO A FRESCO", "slug": "micologico-a-fresco", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40310019", "preco": 40, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Clearence de Creatinina", "slug": "clearence-de-creatinina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301508", "preco": 35, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "URICOSUMIA (Clearance de ácido úrico)", "slug": "uricosumia-clearance-de-acido-urico", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301494", "preco": 45, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Curva Insulinica 5 Tempos", "slug": "curva-insulinica-5-tempos", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40305236", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "WESTERN BLOT (ANTICORPOS ANTI-HIV) - PESQUISA E/OU DOSAGEM", "slug": "western-blot-anticorpos-anti-hiv-pesquisa-e-ou-dosagem", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40307875", "preco": 300, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Proteinuria - Urina 24hs", "slug": "proteinuria-urina-24hs", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40311180", "preco": 20, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Indice Creatinina/Proteina", "slug": "indice-creatinina-proteina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40322483", "preco": 55, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Albumina", "slug": "albumina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40301222", "preco": 15, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Teste rápido COVID19", "slug": "teste-rapido-covid19", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40322054", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "COVID19 - PCR RT", "slug": "covid19-pcr-rt", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40314618", "preco": 350, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "Serotonina", "slug": "serotonina", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40321550", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "SOROLOGIA COVID IGG/IGM", "slug": "sorologia-covid-igg-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40314619", "preco": 250, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "ANTICORPOS TOTAIS COVID19", "slug": "anticorpos-totais-covid19", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40314620", "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "ZIKA VIRUS IGG", "slug": "zika-virus-igg", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40324591", "preco": 400, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "ZIKA VIRUS IGM", "slug": "zika-virus-igm", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40324605", "preco": 400, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "CTX1", "slug": "ctx1", "tipo": "sangue", "categoria": "laboratorio", "codigoTuss": "40317340", "preco": 180, "moeda": "BRL", "ativo": true, "setor": "particular", "origemArquivo": "EXAMES SANGUE PARTICULAR.xlsx"}, {"nome": "ABDOME TOTAL E SUPERIOR", "slug": "abdome-total-e-superior", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 230, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "MAMAS", "slug": "mamas", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PÉLVICO FEMININO E TRANSVAGINAL", "slug": "pelvico-feminino-e-transvaginal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PRÓSTATA VIA ABDOMINAL", "slug": "prostata-via-abdominal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 110, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "RINS E VIAS OU APARELHO URINÁRIO FEMININO E MASCULINO", "slug": "rins-e-vias-ou-aparelho-urinario-feminino-e-masculino", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CERVICAL OU TIREOIDE", "slug": "cervical-ou-tireoide", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PARTES MOLES", "slug": "partes-moles", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "REGIÃO INGUINAL", "slug": "regiao-inguinal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PARADE ABDOMINAL", "slug": "parade-abdominal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OBSTÉTRICO INICIAL", "slug": "obstetrico-inicial", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_obstetricos", "preco": 140, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OBSTÉTRICO NORMAL", "slug": "obstetrico-normal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_obstetricos", "preco": 140, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CERVICAL E TIREOIDE", "slug": "cervical-e-tireoide", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: NATASHA", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OMBRO", "slug": "ombro", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COTOVELO", "slug": "cotovelo", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "BRAÇO OU ANTEBRAÇO OU PUNHO OU MÃO", "slug": "braco-ou-antebraco-ou-punho-ou-mao", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TORNOZELO, CALCANEO E PÉ", "slug": "tornozelo-calcaneo-e-pe", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COXA E PANTURRILHA", "slug": "coxa-e-panturrilha", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "QUADRIL – ADULTO", "slug": "quadril-adulto", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "JOELHO", "slug": "joelho", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PESCOÇO", "slug": "pescoco", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PELE E SUBCUTÂNEO", "slug": "pele-e-subcutaneo", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ABDOME TOTAL SUPERIOR E INFERIOR", "slug": "abdome-total-superior-e-inferior", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 230, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PÉLVICO FEMININO E TRANSVAGINAL", "slug": "pelvico-feminino-e-transvaginal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PRÓSTATA VIA ABDOMINAL", "slug": "prostata-via-abdominal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 110, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PRÓSTATA ABDOME INFERIOR MASCULINO", "slug": "prostata-abdome-inferior-masculino", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 110, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "RINS E VIAS OU APARELHO URINARIO FEMININO E MASCULINO", "slug": "rins-e-vias-ou-aparelho-urinario-feminino-e-masculino", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CERVICAL OU TIREOIDE", "slug": "cervical-ou-tireoide", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TESTICULOS E BOLSA ESCROTAL", "slug": "testiculos-e-bolsa-escrotal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "MAMAS ( SEM RESTRIÇÃO DE MAMAS)", "slug": "mamas-sem-restricao-de-mamas", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PARTES MOLES", "slug": "partes-moles", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "REGIÃO INGUINAL", "slug": "regiao-inguinal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PAREDE ABDOMINAL", "slug": "parede-abdominal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CRÂNIO/FONTENELA (moleira de bebê)", "slug": "cranio-fontenela-moleira-de-bebe", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "SUPERFICIAIS: CERVICAL/AXILA/MÚSCULO/TENDÃO", "slug": "superficiais-cervical-axila-musculo-tendao", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "GLÂNDULA SALIVAR/PARÓTIDAS", "slug": "glandula-salivar-parotidas", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OBSTÉTRICO INICIAL", "slug": "obstetrico-inicial", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_obstetricos", "preco": 140, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OBSTÉTRICO NORMAL", "slug": "obstetrico-normal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_obstetricos", "preco": 140, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OBSTÉTRICO GEMELAR", "slug": "obstetrico-gemelar", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_obstetricos", "preco": 240, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CERVICAL OU TIREOIDE", "slug": "cervical-ou-tireoide", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TESTICULOS E BOLSA ESCROTAL", "slug": "testiculos-e-bolsa-escrotal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OBSTÉTRICO GEMELAR", "slug": "obstetrico-gemelar", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 240, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TRANSFONTENELA", "slug": "transfontenela", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: ARTUR", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "VENOSO DE MEMBRO INFERIOR", "slug": "venoso-de-membro-inferior", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 360, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: STEFANO", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "VENOSO E ARTERIAL DE MEMBRO INFERIOR", "slug": "venoso-e-arterial-de-membro-inferior", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 720, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: STEFANO", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "VENOSO E ARTERIAL DE MEMBRO SUPERIOR", "slug": "venoso-e-arterial-de-membro-superior", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 720, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: STEFANO", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "VENOSO DE MEMBRO SUPERIOR", "slug": "venoso-de-membro-superior", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 360, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: STEFANO", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CARÓTIDAS E VERTEBRAIS", "slug": "carotidas-e-vertebrais", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_doppler", "preco": 800, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DR: STEFANO", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ABDOME TOTAL / SUPERIOR INFERIOR", "slug": "abdome-total-superior-inferior", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 230, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PAREDE ABDOMINAL", "slug": "parede-abdominal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "RINS E VIAS / APARELHO URINÁRIO MASCULINO E FEMININO", "slug": "rins-e-vias-aparelho-urinario-masculino-e-feminino", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "BOLSA ESCROTAL (COM/SEM DOPPLER)", "slug": "bolsa-escrotal-com-sem-doppler", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PRÓSTATA /ABDOME INFERIOR MASCULINO", "slug": "prostata-abdome-inferior-masculino", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 110, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TIREÓIDE", "slug": "tireoide", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TRANSVAGINAL (COM/SEM DOPPLER)", "slug": "transvaginal-com-sem-doppler", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "GLANDULAS SALIVÁRES", "slug": "glandulas-salivares", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "MAMAS", "slug": "mamas", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ORGÃOS SUPERFICIAIS (TIREOIDE, ESCROTO, PÊNIS, CRÂNIO)", "slug": "orgaos-superficiais-tireoide-escroto-penis-cranio", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "GLÂNDULA SALIVAR/PARÓTIDAS", "slug": "glandula-salivar-parotidas", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 160, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PRÓSTATA (VIA ABDOMINAL / TRANSRETAL)", "slug": "prostata-via-abdominal-transretal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PARTES MOLES", "slug": "partes-moles", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PÉLVICO/ABDOME INFERIOR FEMININO", "slug": "pelvico-abdome-inferior-feminino", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_geral", "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CERVICAL", "slug": "cervical", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 190, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "JOELHO", "slug": "joelho", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OMBRO", "slug": "ombro", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PESCOÇO", "slug": "pescoco", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_articular", "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "- OBSTÉTRICA INICIAL", "slug": "obstetrica-inicial", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_obstetricos", "preco": 140, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "- OBSTÉTRICA NORMAL", "slug": "obstetrica-normal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_obstetricos", "preco": 140, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "- OBSTÉTRICA 1 TRIMESTRE (ENDOVAGINAL)", "slug": "obstetrica-1-trimestre-endovaginal", "tipo": "imagem", "categoria": "ultrassonografia", "subcategoria": "us_obstetricos", "preco": 140, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": "DRA: JULIANE", "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC CRANIO ORBITA OU SELAS TURSICAS", "slug": "tc-cranio-orbita-ou-selas-tursicas", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 440, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC ABDOME TOTAL", "slug": "tc-abdome-total", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 800, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC ABDOME SUPERIOR", "slug": "tc-abdome-superior", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 600, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC ARTICULAÇÕES", "slug": "tc-articulacoes", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 440, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC COLUNA LOMBAR DORSAL CERVICAL", "slug": "tc-coluna-lombar-dorsal-cervical", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 400, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC MASTOIDES OU OUVIDOS", "slug": "tc-mastoides-ou-ouvidos", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 440, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC PELVE OU BACIA", "slug": "tc-pelve-ou-bacia", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 440, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC SEGMENTOS BRAÇO ANTEBRAÇOS ETC", "slug": "tc-segmentos-braco-antebracos-etc", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 440, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC TORAX", "slug": "tc-torax", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 600, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC FACE OU SEIOS DA FACE OU ARTICULAÇÃO TEMPORAL", "slug": "tc-face-ou-seios-da-face-ou-articulacao-temporal", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 440, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC MANDIBULA", "slug": "tc-mandibula", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 755, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TC PESCOÇO", "slug": "tc-pescoco", "tipo": "imagem", "categoria": "tomografia", "subcategoria": null, "preco": 905, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ANTEBRAÇO DIREITO OU ESQUERDO 2 POSIÇÕES", "slug": "antebraco-direito-ou-esquerdo-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ARCOS COSTAIS OU HEMITORAX 1 OU 2 POSIÇÕES", "slug": "arcos-costais-ou-hemitorax-1-ou-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 130, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ARTICULAÇÃO SACO ILICA", "slug": "articulacao-saco-ilica", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ARTICULAÇÃO TEMPORO MANDIBULAR BILATERAL", "slug": "articulacao-temporo-mandibular-bilateral", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 170, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ARTICULÇÃO TIBIA TARSICA", "slug": "articulcao-tibia-tarsica", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "BACIA E QUADRIL 1 OU 2 POSIÇÕES", "slug": "bacia-e-quadril-1-ou-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "BRAÇO DIREITO E ESQUERDO 2 POSIÇÕES", "slug": "braco-direito-e-esquerdo-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CALCANEO DIREITO OU ESQUERDO 2 POSIÇÕES", "slug": "calcaneo-direito-ou-esquerdo-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CAVUM 1 OU 2 POSIÇÕES", "slug": "cavum-1-ou-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CLAVICULA DIREITA OU ESQUERDA 1 OU 2 POSIÇÕES", "slug": "clavicula-direita-ou-esquerda-1-ou-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COLUNA CERVICAL 2 OU 3 POSIÇÕES", "slug": "coluna-cervical-2-ou-3-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COLUNA CERVICAL 4 OU 5 POSIÇÕES OBLIQUAS", "slug": "coluna-cervical-4-ou-5-posicoes-obliquas", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 130, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COLUNA DORSAL 1 A 4 POSIÇÕES", "slug": "coluna-dorsal-1-a-4-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COLUNA LOMBO SACRA 1 A 3 POSIÇÕES", "slug": "coluna-lombo-sacra-1-a-3-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COLUNA LOMBO SACRA 4 OU 5 POSIÇÕES", "slug": "coluna-lombo-sacra-4-ou-5-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 170, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COLUNA LOMBO SACRA 7 POSIÇÕES", "slug": "coluna-lombo-sacra-7-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 200, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COTOVELO DIREITO OU ESQUERDO 2 POSIÇÕES", "slug": "cotovelo-direito-ou-esquerdo-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COXA DIREITA OU ESQUERDA 2 POSIÇÕES", "slug": "coxa-direita-ou-esquerda-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CRANIO 2 POSIÇÕES", "slug": "cranio-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CRANIO 3 POSIÇÕES", "slug": "cranio-3-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 130, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CRANIO 4 POSIÇÕES", "slug": "cranio-4-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ESCAPULA OU OMBRO DIREITO OU ESQUERDO 1 OU 2 POSIÇÕES", "slug": "escapula-ou-ombro-direito-ou-esquerdo-1-ou-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "FEMUR DIREITO OU ESQUERDO 1 ATÉ 4 POSIÇÕES", "slug": "femur-direito-ou-esquerdo-1-ate-4-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "COXO FEMURAL", "slug": "coxo-femural", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "JOELHO DIREITO OU ESQUERDO 1 OU 2 POSIÇÕES", "slug": "joelho-direito-ou-esquerdo-1-ou-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "JOELHO DIREITO OU ESQUERDO 3 POSIÇÕES", "slug": "joelho-direito-ou-esquerdo-3-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "MÃO DIREITA OU ESQUERDA 1 OU 2 POSIÇÕES", "slug": "mao-direita-ou-esquerda-1-ou-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "MASTOIDE DIREITA OU ESQUERDA OU BILATERAL", "slug": "mastoide-direita-ou-esquerda-ou-bilateral", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 110, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OMOPLATA", "slug": "omoplata", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "OSSOS DA FACE OU NARIZ 1 ATÉ 4 POSIÇÕES", "slug": "ossos-da-face-ou-nariz-1-ate-4-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 130, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PERNA DIREITA OU ESQUERDA 1 OU 2 POSIÇÕES", "slug": "perna-direita-ou-esquerda-1-ou-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "PUNHO DIREITO OU ESQUERDO 1 ATÉ 4 POSIÇOES", "slug": "punho-direito-ou-esquerdo-1-ate-4-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 120, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "SEIOS DA FACE 1 ATÉ 3 POSIÇÕES", "slug": "seios-da-face-1-ate-3-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "SEIOS DA FACE 4 POSIÇÕES", "slug": "seios-da-face-4-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 130, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "SELA TURSICA", "slug": "sela-tursica", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TORAX 1 OU 2 POSIÇÕES", "slug": "torax-1-ou-2-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 90, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "TORAX 3 OU 4 POSIÇÕES", "slug": "torax-3-ou-4-posicoes", "tipo": "imagem", "categoria": "raio_x", "subcategoria": null, "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ECOCARDIO STRESS FARMACOLOGICO - PAGAMENTO SOMENTE EM DINHEIRO", "slug": "ecocardio-stress-farmacologico-pagamento-somente-em-dinheiro", "tipo": "imagem", "categoria": "cardiologia", "subcategoria": null, "preco": 600, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ECOCARDIO TRANS ESOFAGICO TRANSTORACICO - PAGAMENTO SOMENTE EM DINHEIRO", "slug": "ecocardio-trans-esofagico-transtoracico-pagamento-somente-em-dinheiro", "tipo": "imagem", "categoria": "cardiologia", "subcategoria": null, "preco": 700, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ECOCARDIO TRANSTORACICO - PAGAMENTO SOMENTE EM DINHEIRO", "slug": "ecocardio-transtoracico-pagamento-somente-em-dinheiro", "tipo": "imagem", "categoria": "cardiologia", "subcategoria": null, "preco": 350, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "ECG ATÉ 12 DERIVAÇÕES - PAGAMENTO SOMENTE EM DINHEIRO", "slug": "ecg-ate-12-derivacoes-pagamento-somente-em-dinheiro", "tipo": "imagem", "categoria": "cardiologia", "subcategoria": null, "preco": 100, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "MAPA - PAGAMENTO SOMENTE EM DINHEIRO", "slug": "mapa-pagamento-somente-em-dinheiro", "tipo": "imagem", "categoria": "cardiologia", "subcategoria": null, "preco": 150, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "HOLTER - PAGAMENTO SOMENTE EM DINHEIRO", "slug": "holter-pagamento-somente-em-dinheiro", "tipo": "imagem", "categoria": "cardiologia", "subcategoria": null, "preco": 250, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}, {"nome": "CITOLOGIA ONCOTICA (PAPA NICOLAU) - PAGAMENTO SOMENTE EM DINHEIRO", "slug": "citologia-oncotica-papa-nicolau-pagamento-somente-em-dinheiro", "tipo": "imagem", "categoria": "cardiologia", "subcategoria": null, "preco": 140, "moeda": "BRL", "ativo": true, "setor": "particular", "medico": null, "origemArquivo": "TABELA DE EXAMES DE IMAGEM ATUALIZADA 2023 (1).ods"}];
+    /* ── Utilitários ──────────────────────────────────────── */
 
-    const state = {
-      busca: "",
-      tipo: "",
-      categoria: "",
-      desconto: 0,
-      orcamento: []
-    };
+    function fmt(valor) {
+      return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
 
-    const el = {
-      busca: document.getElementById("busca"),
-      filtroTipo: document.getElementById("filtroTipo"),
-      filtroCategoria: document.getElementById("filtroCategoria"),
-      resultadoBusca: document.getElementById("resultadoBusca"),
-      resumoBusca: document.getElementById("resumoBusca"),
-      totalExames: document.getElementById("totalExames"),
-      orcamentoTabela: document.getElementById("orcamentoTabela"),
-      itensCount: document.getElementById("itensCount"),
-      subtotalValor: document.getElementById("subtotalValor"),
-      desconto: document.getElementById("desconto"),
-      descontoValor: document.getElementById("descontoValor"),
-      totalFinal: document.getElementById("totalFinal"),
-      btnImprimir: document.getElementById("btnImprimir"),
-      btnLimpar: document.getElementById("btnLimpar"),
-      btnExportar: document.getElementById("btnExportar"),
-      pacienteNome: document.getElementById("pacienteNome"),
-      pacienteCpf: document.getElementById("pacienteCpf"),
-      pacienteData: document.getElementById("pacienteData"),
-      pacienteObs: document.getElementById("pacienteObs")
-    };
+    function normalizar(str) {
+      return str.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9 ]/g, ' ');
+    }
 
-    function brl(valor) {
-      return Number(valor || 0).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
+    function destacar(nome, palavras) {
+      let result = nome;
+      palavras.forEach(p => {
+        if (!p) return;
+        const regex = new RegExp(`(${p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        result = result.replace(regex, '<mark>$1</mark>');
       });
+      return result;
     }
 
-    function escapeHtml(texto) {
-      return String(texto ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2200);
     }
 
-    function getCategorias() {
-      const categorias = [...new Set(EXAMES.map(x => x.categoria).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
-      el.filtroCategoria.innerHTML = '<option value="">Todas as categorias</option>' +
-        categorias.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
-    }
+    /* ── Inicialização ────────────────────────────────────── */
 
-    function filtrarExames() {
-      const termo = state.busca.trim().toLowerCase();
-      return EXAMES.filter(item => {
-        const okTipo = !state.tipo || (item.tipo || "") === state.tipo;
-        const okCategoria = !state.categoria || (item.categoria || "") === state.categoria;
-        const alvo = [
-          item.nome, item.slug, item.tipo, item.categoria, item.subcategoria,
-          item.codigoTuss, item.medico, item.origemArquivo
-        ].filter(Boolean).join(" ").toLowerCase();
-        const okBusca = !termo || alvo.includes(termo);
-        return okTipo && okCategoria && okBusca;
-      });
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById('pac-data').value = hoje;
+      document.getElementById('data-header').textContent =
+        new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('total-exames').textContent = `${EXAMES.length} exames`;
+      document.getElementById('search-count').textContent = `Digite para buscar entre os ${EXAMES.length} exames`;
+    });
 
-    function renderBusca() {
-      const resultados = filtrarExames().slice(0, 250);
-      el.totalExames.textContent = EXAMES.length;
-      el.resumoBusca.textContent = `Mostrando ${resultados.length} resultado(s)` + (filtrarExames().length > 250 ? " de 250+" : "");
+    /* ── Busca ─────────────────────────────────────────────── */
 
-      if (!resultados.length) {
-        el.resultadoBusca.innerHTML = `<tr><td colspan="5" class="empty">Nenhum exame encontrado.</td></tr>`;
+    let searchTimeout;
+
+    document.getElementById('search').addEventListener('input', function () {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => buscar(this.value.trim()), 120);
+    });
+
+    function buscar(termo) {
+      const body  = document.getElementById('results-body');
+      const count = document.getElementById('search-count');
+
+      if (!termo) {
+        body.innerHTML  = '<tr><td colspan="5" class="empty-msg">Aguardando pesquisa...</td></tr>';
+        count.textContent = `Digite para buscar entre os ${EXAMES.length} exames`;
         return;
       }
 
-      el.resultadoBusca.innerHTML = resultados.map((item, idx) => `
-        <tr>
-          <td>
-            <strong>${escapeHtml(item.nome)}</strong>
-            <div class="small">${escapeHtml(item.subcategoria || item.origemArquivo || "")}</div>
-          </td>
-          <td><span class="badge ${item.tipo === "imagem" ? "imagem" : ""}">${escapeHtml(item.tipo || "-")}</span></td>
-          <td>${escapeHtml(item.categoria || "-")}</td>
-          <td>${escapeHtml(item.codigoTuss || "-")}</td>
-          <td class="center">
-            <button class="mini-btn mini-add" onclick="adicionarExame(${item.__idx})">+</button>
-          </td>
-        </tr>
-      `).join("");
-    }
+      const termoN   = normalizar(termo);
+      const palavras = termoN.split(/\s+/).filter(Boolean);
 
-    function adicionarExame(index) {
-      const item = EXAMES[index];
-      const existente = state.orcamento.find(x => x.__idx === index);
-      if (existente) {
-        existente.quantidade += 1;
-      } else {
-        state.orcamento.push({ ...item, __idx: index, quantidade: 1 });
+      const resultados = EXAMES
+        .map(e => {
+          const nomeN    = normalizar(e.nome);
+          const starts   = nomeN.startsWith(termoN) ? 3 : 0;
+          const allWords = palavras.every(p => nomeN.includes(p)) ? 2 : 0;
+          const anyWord  = palavras.some(p => nomeN.includes(p))  ? 1 : 0;
+          return { ...e, score: starts + allWords + anyWord };
+        })
+        .filter(e => e.score > 0)
+        .sort((a, b) => b.score - a.score || a.nome.localeCompare(b.nome));
+
+      count.textContent = resultados.length === 0
+        ? `Nenhum resultado para "${termo}"`
+        : `${resultados.length} resultado(s) para "${termo}"`;
+
+      if (resultados.length === 0) {
+        body.innerHTML = `<tr><td colspan="5" class="empty-msg">Nenhum exame encontrado para "<b>${termo}</b>"</td></tr>`;
+        return;
       }
-      renderOrcamento();
+
+      body.innerHTML = resultados.map(e => {
+        const nomeHL = destacar(e.nome, palavras);
+        const badge  = e.tipo === 'Laboratorial'
+          ? '<span class="badge badge-lab">Lab</span>'
+          : '<span class="badge badge-img">Imagem</span>';
+        const idx = EXAMES.findIndex(x => x.nome === e.nome && x.tuss === e.tuss);
+
+        return `
+          <tr>
+            <td>${nomeHL}</td>
+            <td class="tipo">${badge}</td>
+            <td class="tuss">${e.tuss}</td>
+            <td class="preco">${fmt(e.preco)}</td>
+            <td><button class="btn-add" onclick="adicionarExame(${idx})" title="Adicionar">+</button></td>
+          </tr>`;
+      }).join('');
     }
 
-    function removerExame(index) {
-      state.orcamento = state.orcamento.filter(x => x.__idx !== index);
-      renderOrcamento();
-    }
+    /* ── Orçamento ─────────────────────────────────────────── */
 
-    function alterarQuantidade(index, valor) {
-      const qtd = Math.max(1, Number(valor || 1));
-      const item = state.orcamento.find(x => x.__idx === index);
-      if (item) {
-        item.quantidade = qtd;
-        renderOrcamento();
-      }
+    let itens   = [];
+    let counter = 0;
+
+    function adicionarExame(idx) {
+      const e = EXAMES[idx];
+      if (!e) return;
+
+      counter++;
+      itens.push({ id: counter, nome: e.nome, tipo: e.tipo, tuss: e.tuss, preco: e.preco, qtde: 1 });
+      renderOrcamento();
+
+      const label = e.nome.length > 35 ? e.nome.slice(0, 35) + '…' : e.nome;
+      toast(`"${label}" adicionado`);
     }
 
     function renderOrcamento() {
-      if (!state.orcamento.length) {
-        el.orcamentoTabela.innerHTML = `<tr><td colspan="5" class="empty">Nenhum exame adicionado.</td></tr>`;
-      } else {
-        el.orcamentoTabela.innerHTML = state.orcamento.map(item => {
-          const subtotal = Number(item.preco || 0) * Number(item.quantidade || 1);
-          return `
-            <tr>
-              <td>
-                <strong>${escapeHtml(item.nome)}</strong>
-                <div class="small">${escapeHtml(item.tipo || "-")} • ${escapeHtml(item.categoria || "-")}</div>
-              </td>
-              <td><input class="qty" type="number" min="1" value="${item.quantidade}" onchange="alterarQuantidade(${item.__idx}, this.value)" /></td>
-              <td class="price">${brl(item.preco)}</td>
-              <td class="price">${brl(subtotal)}</td>
-              <td class="center"><button class="mini-btn mini-del" onclick="removerExame(${item.__idx})">×</button></td>
-            </tr>
-          `;
-        }).join("");
+      const body = document.getElementById('orc-body');
+
+      if (itens.length === 0) {
+        body.innerHTML = '<tr id="orc-empty"><td colspan="6" class="empty-msg">Adicione exames pela busca ao lado</td></tr>';
+        atualizarTotais();
+        return;
       }
 
-      const subtotal = state.orcamento.reduce((acc, item) => acc + (Number(item.preco || 0) * Number(item.quantidade || 1)), 0);
-      const descontoPercentual = Math.min(100, Math.max(0, Number(state.desconto || 0)));
-      const descontoValor = subtotal * (descontoPercentual / 100);
-      const total = subtotal - descontoValor;
+      body.innerHTML = itens.map((item, i) => {
+        const sub   = item.preco * item.qtde;
+        const badge = item.tipo === 'Laboratorial'
+          ? '<span class="badge badge-lab">Lab</span>'
+          : '<span class="badge badge-img">Img</span>';
 
-      el.itensCount.textContent = state.orcamento.length;
-      el.subtotalValor.textContent = brl(subtotal);
-      el.descontoValor.textContent = brl(descontoValor);
-      el.totalFinal.textContent = brl(total);
+        return `
+          <tr>
+            <td class="num">${i + 1}</td>
+            <td>
+              <div style="font-size:13px;font-weight:600">${item.nome}</div>
+              <div style="display:flex;gap:6px;margin-top:2px;align-items:center">
+                ${badge}
+                <span style="font-size:10px;color:var(--cinza-500);font-family:monospace">TUSS ${item.tuss}</span>
+              </div>
+            </td>
+            <td class="qty" style="text-align:center">
+              <input class="qty-input" type="number" min="1" value="${item.qtde}"
+                     onchange="atualizarQtde(${item.id}, this.value)">
+            </td>
+            <td class="val">${fmt(item.preco)}</td>
+            <td class="sub">${fmt(sub)}</td>
+            <td><button class="btn-del" onclick="removerItem(${item.id})" title="Remover">✕</button></td>
+          </tr>`;
+      }).join('');
+
+      atualizarTotais();
     }
 
-    function exportarOrcamento() {
-      const payload = {
-        paciente: {
-          nome: el.pacienteNome.value.trim(),
-          cpf: el.pacienteCpf.value.trim(),
-          data: el.pacienteData.value || null,
-          observacao: el.pacienteObs.value.trim()
-        },
-        descontoPercentual: Number(state.desconto || 0),
-        itens: state.orcamento.map(item => ({
-          nome: item.nome,
-          tipo: item.tipo,
-          categoria: item.categoria,
-          subcategoria: item.subcategoria || null,
-          codigoTuss: item.codigoTuss || null,
-          preco: Number(item.preco || 0),
-          quantidade: Number(item.quantidade || 1),
-          subtotal: Number(item.preco || 0) * Number(item.quantidade || 1)
-        }))
-      };
+    function atualizarQtde(id, val) {
+      const item = itens.find(x => x.id === id);
+      if (item) {
+        item.qtde = Math.max(1, parseInt(val) || 1);
+        renderOrcamento();
+      }
+    }
 
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "orcamento_exames.json";
-      a.click();
-      URL.revokeObjectURL(url);
+    function removerItem(id) {
+      itens = itens.filter(x => x.id !== id);
+      renderOrcamento();
     }
 
     function limparOrcamento() {
-      state.orcamento = [];
-      state.desconto = 0;
-      el.desconto.value = 0;
-      renderOrcamento();
-    }
-
-    function init() {
-      EXAMES.forEach((item, index) => item.__idx = index);
-      getCategorias();
-      renderBusca();
-      renderOrcamento();
-      const hoje = new Date().toISOString().slice(0,10);
-      el.pacienteData.value = hoje;
-
-      el.busca.addEventListener("input", e => {
-        state.busca = e.target.value;
-        renderBusca();
-      });
-
-      el.filtroTipo.addEventListener("change", e => {
-        state.tipo = e.target.value;
-        renderBusca();
-      });
-
-      el.filtroCategoria.addEventListener("change", e => {
-        state.categoria = e.target.value;
-        renderBusca();
-      });
-
-      el.desconto.addEventListener("input", e => {
-        state.desconto = e.target.value;
+      if (itens.length === 0) return;
+      if (confirm('Deseja limpar todos os exames do orçamento?')) {
+        itens = [];
         renderOrcamento();
-      });
-
-      el.btnImprimir.addEventListener("click", () => window.print());
-      el.btnLimpar.addEventListener("click", limparOrcamento);
-      el.btnExportar.addEventListener("click", exportarOrcamento);
+      }
     }
 
-    window.adicionarExame = adicionarExame;
-    window.removerExame = removerExame;
-    window.alterarQuantidade = alterarQuantidade;
+    /* ── Totais & Desconto ─────────────────────────────────── */
 
-    init();
+    function atualizarTotais() {
+      const sub     = itens.reduce((s, i) => s + i.preco * i.qtde, 0);
+      const desc    = parseFloat(document.getElementById('desconto').value) || 0;
+      const valDesc = sub * (desc / 100);
+      const total   = sub - valDesc;
+
+      document.getElementById('subtotal').textContent     = fmt(sub);
+      document.getElementById('val-desconto').textContent  = `– ${fmt(valDesc)}`;
+      document.getElementById('total-final').textContent   = fmt(total);
+    }
+
+    document.getElementById('desconto').addEventListener('input', atualizarTotais);
   </script>
+
 </body>
 </html>
