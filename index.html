@@ -734,19 +734,118 @@
     .toast.show { transform: translateY(0); opacity: 1; }
 
     /* ═══════════════════════════════════════════════════════
-       PRINT
+       PRINT — versão compacta e profissional
        ═══════════════════════════════════════════════════════ */
     @media print {
-      body { background: white; }
-      .layout { grid-template-columns: 1fr; }
-      .card:first-of-type { display: none; }
-      .actions, .btn-del { display: none; }
-      .theme-toggle { display: none; }
-      @page { margin: 12mm; }
+      @page { margin: 10mm; size: A4; }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        background: white !important;
+        font-size: 11px;
+      }
+
+      /* Esconde o que não deve sair na impressão */
+      .card:first-of-type,    /* card de busca */
+      .actions,
+      .btn-del,
+      .theme-toggle,
+      .toast,
+      .date-icon,
+      .calendar-popup { display: none !important; }
+
+      /* Layout: 1 coluna, sem padding lateral grande */
+      .layout {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+
+      /* Header: compacto, identidade visual mantida */
+      .header {
+        padding: 8px 0 10px !important;
+        margin-bottom: 8px;
+        border-bottom: 2px solid var(--primary) !important;
+        box-shadow: none !important;
+        position: static !important;
+      }
+      .header-logo { height: 38px !important; }
+      .header h1   { font-size: 14px !important; }
+      .header p    { font-size: 10px !important; margin-top: 1px !important; }
+
+      /* Card do paciente: GRID 3 COLUNAS forçado, compacto */
+      .paciente-card {
+        margin: 0 0 8px !important;
+        max-width: 100% !important;
+        page-break-inside: avoid;
+      }
+      .paciente-card .card-header {
+        padding: 4px 10px !important;
+        font-size: 9px !important;
+        background: #F2F2F4 !important;
+      }
+      .paciente-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px 10px !important;
+        padding: 8px 10px !important;
+      }
+      .field label {
+        font-size: 8px !important;
+        margin-bottom: 1px !important;
+      }
+      .field input {
+        padding: 3px 6px !important;
+        font-size: 11px !important;
+        border: none !important;
+        border-bottom: 1px solid #BDC3C7 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      /* Esconde campos vazios para não desperdiçar espaço */
+      .field input[value=""]:placeholder-shown ~ label,
+      .field:has(input[value=""]:placeholder-shown) {
+        /* Mantém visível mesmo vazio - atendente preenche à mão */
+      }
+
+      /* Card do orçamento: enxuto */
+      .card { box-shadow: none !important; border: 1px solid #E0E0E0 !important; }
+      .card-body { padding: 8px 10px !important; }
+      .orc-header {
+        padding: 5px 10px !important;
+        font-size: 10px !important;
+        background: var(--primary) !important;
+        color: white !important;
+      }
+
+      /* Tabela do orçamento: linhas compactas */
+      .orc-table { font-size: 10.5px !important; margin-top: 4px !important; }
+      .orc-table thead th {
+        padding: 4px 6px !important;
+        font-size: 8.5px !important;
+      }
+      .orc-table td {
+        padding: 4px 6px !important;
+      }
+      .orc-table td > div { font-size: 10.5px !important; }
+      .orc-table td > div:last-child { font-size: 8px !important; margin-top: 0 !important; }
+
+      .orc-scroll { max-height: none !important; overflow: visible !important; }
+
+      /* Quantidade: número visível sem caixa */
       .qty-input {
         border: none !important;
         background: transparent !important;
-        font-weight: 700;
+        font-weight: 700 !important;
+        width: 30px !important;
+        font-size: 11px !important;
+        padding: 0 !important;
         -moz-appearance: textfield;
         appearance: textfield;
       }
@@ -755,11 +854,36 @@
         -webkit-appearance: none;
         margin: 0;
       }
-      .total-row.desconto { display: none !important; }
-      .header, .total-row.final, .badge {
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
+
+      /* Totais compactos */
+      .totals {
+        margin-top: 8px !important;
+        padding-top: 6px !important;
       }
+      .total-row {
+        padding: 2px 0 !important;
+        font-size: 11px !important;
+      }
+      .total-row.desconto { display: none !important; }
+      .total-row.final {
+        margin-top: 6px !important;
+        padding: 8px 12px !important;
+        font-size: 12px !important;
+        background: var(--primary) !important;
+        color: white !important;
+      }
+      .total-row.final span:last-child { font-size: 14px !important; }
+
+      /* Badges compactos */
+      .badge {
+        padding: 1px 5px !important;
+        font-size: 7.5px !important;
+      }
+
+      /* Quebra de página inteligente */
+      .paciente-card { page-break-after: avoid; }
+      .orc-table tbody tr { page-break-inside: avoid; }
+      .totals { page-break-inside: avoid; }
     }
 
     /* ═══════════════════════════════════════════════════════
