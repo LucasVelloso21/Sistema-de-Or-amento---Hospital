@@ -739,6 +739,25 @@
     @media print {
       @page { margin: 10mm; size: A4; }
 
+      /* FORÇA TEMA CLARO NA IMPRESSÃO
+         Independente do tema ativo na tela, o papel sempre sai branco */
+      :root, [data-theme="dark"] {
+        --bg:             #FFFFFF !important;
+        --bg-elevated:    #FFFFFF !important;
+        --bg-subtle:      #FAFAFB !important;
+        --bg-subtle-2:    #F2F2F4 !important;
+        --text:           #1A1A1F !important;
+        --text-secondary: #5A5A66 !important;
+        --text-muted:     #8B8B96 !important;
+        --text-disabled:  #C5C5CD !important;
+        --border:         #E8E8EC !important;
+        --border-strong:  #D4D4DA !important;
+        --success:        #16A34A !important;
+        --primary-soft:   #FDEDEC !important;
+        --ink:            #C0392B !important;
+        --ink-on:         #FFFFFF !important;
+      }
+
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -746,6 +765,7 @@
 
       body {
         background: white !important;
+        color: #1A1A1F !important;
         font-size: 11px;
       }
 
