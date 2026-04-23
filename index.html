@@ -10,78 +10,167 @@
 
   <style>
     /* ═══════════════════════════════════════════════════════
-       RESET & VARIÁVEIS — Paleta Hospital Samaritano
+       HOSPITAL SAMARITANO · Sistema Premium
+       Tipografia editorial, micro-interações refinadas
        ═══════════════════════════════════════════════════════ */
+
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* ─── TEMA CLARO (padrão) ─── */
     :root {
-      /* Cores extraídas da logo */
-      --vermelho:        #C0392B;
-      --vermelho-escuro: #962D22;
-      --vermelho-claro:  #E74C3C;
-      --vermelho-bg:     #FDEDEC;
+      /* Cor institucional do Samaritano */
+      --primary:        #C0392B;
+      --primary-dark:   #962D22;
+      --primary-light:  #E74C3C;
+      --primary-soft:   #FDEDEC;
+      --primary-glow:   rgba(192, 57, 43, 0.12);
 
-      /* Neutros */
-      --cinza-900: #2C2C2C;
-      --cinza-700: #4A4A4A;
-      --cinza-500: #7F8C8D;
-      --cinza-300: #BDC3C7;
-      --cinza-100: #ECF0F1;
-      --cinza-50:  #F8F9FA;
-      --branco:    #FFFFFF;
+      /* Neutros — paleta editorial fria */
+      --bg:             #F7F7F8;
+      --bg-elevated:    #FFFFFF;
+      --bg-subtle:      #FAFAFB;
+      --bg-subtle-2:    #F2F2F4;
 
-      /* Acentos funcionais */
-      --verde:       #27AE60;
-      --verde-valor: #1E8449;
+      --text:           #1A1A1F;
+      --text-secondary: #5A5A66;
+      --text-muted:     #8B8B96;
+      --text-disabled:  #C5C5CD;
+
+      --border:         #E8E8EC;
+      --border-strong:  #D4D4DA;
+
+      /* Sucesso (valores monetários) */
+      --success:        #16A34A;
+      --success-soft:   #DCFCE7;
 
       /* Layout */
-      --radius:    6px;
-      --radius-lg: 10px;
-      --sombra:    0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-      --sombra-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --radius-sm:  6px;
+      --radius:     8px;
+      --radius-lg:  12px;
+      --radius-xl:  16px;
+
+      /* Sombras editoriais — bem sutis */
+      --shadow-sm:  0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow:     0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md:  0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+      --shadow-lg:  0 12px 32px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04);
+      --shadow-glow: 0 0 0 4px var(--primary-glow);
 
       /* Tipografia */
-      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-body:    'DM Sans', system-ui, -apple-system, sans-serif;
+
+      /* Acento escuro fixo (não muda no dark mode) */
+      --ink:           #1A1A1F;
+      --ink-on:        #FFFFFF;
+    }
+
+    /* ─── TEMA ESCURO ─── */
+    [data-theme="dark"] {
+      --bg:             #0E0E12;
+      --bg-elevated:    #16161C;
+      --bg-subtle:      #1A1A22;
+      --bg-subtle-2:    #20202A;
+
+      --text:           #F4F4F8;
+      --text-secondary: #B8B8C8;
+      --text-muted:     #7A7A88;
+      --text-disabled:  #4A4A56;
+
+      --border:         #2A2A36;
+      --border-strong:  #3A3A48;
+
+      --primary-soft:   rgba(192, 57, 43, 0.15);
+      --primary-glow:   rgba(231, 76, 60, 0.18);
+
+      --success:        #22C55E;
+      --success-soft:   rgba(34, 197, 94, 0.15);
+
+      --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow:     0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+      --shadow-lg:  0 12px 32px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+
+      /* Acento no escuro: vira o vermelho do hospital */
+      --ink:        var(--primary);
+      --ink-on:     #FFFFFF;
     }
 
     body {
-      font-family: var(--font);
-      background: var(--cinza-50);
-      color: var(--cinza-900);
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'cv11', 'ss01';
+      transition: background 0.3s ease, color 0.3s ease;
     }
+
+    /* Tipografia base */
+    h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; }
 
     /* ═══════════════════════════════════════════════════════
        HEADER
        ═══════════════════════════════════════════════════════ */
     .header {
-      background: var(--branco);
-      color: var(--cinza-900);
-      padding: 16px 32px;
+      background: var(--bg-elevated);
+      padding: 18px 32px;
       display: flex;
       align-items: center;
-      gap: 16px;
-      border-bottom: 3px solid var(--vermelho);
-      box-shadow: var(--sombra);
-    }
-
-    .header h1 {
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      color: var(--cinza-900);
-    }
-
-    .header p {
-      font-size: 12px;
-      color: var(--cinza-500);
-      margin-top: 2px;
+      gap: 18px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
 
     .header-logo {
-      height: 46px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+    }
+
+    .header-text { flex: 1; }
+
+    .header h1 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .header p {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+
+    /* Botão de tema */
+    .theme-toggle {
+      width: 38px;
+      height: 38px;
       border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -90,9 +179,9 @@
     .layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      padding: 20px 24px;
-      max-width: 1400px;
+      gap: 22px;
+      padding: 22px 28px;
+      max-width: 1440px;
       margin: 0 auto;
     }
 
@@ -100,77 +189,238 @@
        CARDS
        ═══════════════════════════════════════════════════════ */
     .card {
-      background: var(--branco);
+      background: var(--bg-elevated);
       border-radius: var(--radius-lg);
-      box-shadow: var(--sombra);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
       overflow: hidden;
-      border: 1px solid var(--cinza-100);
+      transition: box-shadow 0.2s ease;
     }
 
     .card-header {
-      padding: 12px 20px;
+      padding: 14px 22px;
       font-weight: 600;
-      font-size: 13px;
-      color: var(--branco);
+      font-size: 12.5px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      letter-spacing: 0.3px;
+      gap: 10px;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
+      font-family: var(--font-display);
     }
 
-    .card-body { padding: 16px 20px; }
+    .card-body { padding: 18px 22px; }
 
     .busca-header {
-      background: var(--vermelho);
+      background: var(--primary);
+      color: white;
     }
 
     .orc-header {
-      background: var(--cinza-900);
+      background: var(--ink);
+      color: var(--ink-on);
     }
 
-    /* ═══════════════════════════════════════════════════════
-       DADOS DO PACIENTE
-       ═══════════════════════════════════════════════════════ */
-    .paciente-card { margin: 16px 24px 0; }
-
+    .paciente-card { margin: 22px 28px 0; max-width: calc(1440px - 56px); margin-left: auto; margin-right: auto; overflow: visible; }
     .paciente-card .card-header {
-      background: var(--cinza-700);
+      background: var(--bg-subtle-2);
+      color: var(--text);
+    }
+    .paciente-card > div:last-child {
+      overflow: visible;
     }
 
     .paciente-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      padding: 14px 20px;
+      gap: 14px;
+      padding: 18px 22px;
     }
 
+    /* ═══════════════════════════════════════════════════════
+       FORMULÁRIOS
+       ═══════════════════════════════════════════════════════ */
     .field label {
       display: block;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
-      color: var(--cinza-500);
+      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      font-family: var(--font-display);
     }
 
     .field input {
       width: 100%;
-      border: 1px solid var(--cinza-300);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
-      padding: 8px 10px;
-      font-size: 13px;
-      font-family: var(--font);
-      transition: border 0.2s, box-shadow 0.2s;
-      background: var(--cinza-50);
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.18s ease;
+      background: var(--bg-subtle);
     }
 
     .field input:focus {
       outline: none;
-      border-color: var(--vermelho);
-      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
-      background: var(--branco);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+      background: var(--bg-elevated);
+    }
+
+    .field input[readonly] {
+      background: var(--bg-subtle-2);
+      color: var(--text-secondary);
+      cursor: default;
+    }
+
+    /* Date input customizado */
+    .date-wrap { position: relative; }
+    .date-wrap input {
+      padding-right: 40px;
+      cursor: text;
+    }
+    .date-wrap .date-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+    }
+    .date-wrap .date-icon:hover {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    /* Calendário popover */
+    .calendar-popup {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 14px;
+      width: 280px;
+      z-index: 100;
+      display: none;
+      animation: cal-fade 0.18s ease;
+    }
+    .calendar-popup.show { display: block; }
+
+    @keyframes cal-fade {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .cal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .cal-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      text-transform: capitalize;
+    }
+    .cal-nav {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cal-nav:hover { background: var(--primary-soft); color: var(--primary); }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+    .cal-dow {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 6px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.12s ease;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+    }
+    .cal-day:hover { background: var(--primary-soft); color: var(--primary); }
+    .cal-day.muted { color: var(--text-disabled); }
+    .cal-day.today {
+      background: var(--bg-subtle-2);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .cal-day.selected {
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+    }
+    .cal-day.selected:hover { background: var(--primary-dark); color: white; }
+
+    .cal-footer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 6px;
+    }
+    .cal-shortcut {
+      flex: 1;
+      padding: 6px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-body);
+    }
+    .cal-shortcut:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-soft);
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -180,282 +430,319 @@
 
     .search-input {
       width: 100%;
-      padding: 10px 14px 10px 40px;
-      border: 1.5px solid var(--cinza-300);
+      padding: 12px 14px 12px 42px;
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
-      font-size: 14px;
-      font-family: var(--font);
-      transition: border 0.2s, box-shadow 0.2s;
-      background: var(--cinza-50);
+      font-size: 14.5px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.18s ease;
+      background: var(--bg-subtle);
     }
-
     .search-input:focus {
       outline: none;
-      border-color: var(--vermelho);
-      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
-      background: var(--branco);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+      background: var(--bg-elevated);
     }
+    .search-input::placeholder { color: var(--text-muted); }
 
     .search-icon {
       position: absolute;
-      left: 12px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
       font-size: 16px;
       pointer-events: none;
-      color: var(--cinza-500);
+      color: var(--text-muted);
     }
 
     .search-count {
-      font-size: 11px;
-      color: var(--vermelho);
-      margin-top: 6px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 8px;
       min-height: 16px;
+      font-weight: 500;
     }
 
     /* ═══════════════════════════════════════════════════════
        TABELA DE RESULTADOS
        ═══════════════════════════════════════════════════════ */
-    .results-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    .results-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
 
-    .results-table thead tr { background: var(--vermelho); color: var(--branco); }
+    .results-table thead tr { background: var(--bg-subtle-2); }
     .results-table thead th {
-      padding: 8px 10px;
+      padding: 10px 12px;
       text-align: left;
-      font-size: 10px;
-      font-weight: 600;
+      font-size: 10.5px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      border-bottom: 1px solid var(--border);
     }
     .results-table thead th:last-child { text-align: center; width: 48px; }
 
     .results-table tbody tr {
-      border-bottom: 1px solid var(--cinza-100);
-      transition: background 0.15s;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.12s ease;
     }
-    .results-table tbody tr:hover                   { background: var(--vermelho-bg); }
-    .results-table tbody tr:nth-child(even)          { background: var(--cinza-50); }
-    .results-table tbody tr:nth-child(even):hover    { background: var(--vermelho-bg); }
+    .results-table tbody tr:hover { background: var(--primary-soft); }
+    .results-table tbody tr:last-child { border-bottom: none; }
 
-    .results-table td       { padding: 7px 10px; vertical-align: middle; }
-    .results-table td.preco { color: var(--verde-valor); font-weight: 600; text-align: right; white-space: nowrap; }
-    .results-table td.tuss  { color: var(--cinza-500); font-size: 11px; font-family: 'SF Mono', 'Consolas', monospace; }
+    .results-table td { padding: 9px 12px; vertical-align: middle; color: var(--text); }
+    .results-table td.preco {
+      color: var(--success);
+      font-weight: 700;
+      text-align: right;
+      white-space: nowrap;
+      font-feature-settings: 'tnum';
+    }
+    .results-table td.tuss {
+      color: var(--text-muted);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+    }
 
-    .results-scroll { max-height: 420px; overflow-y: auto; }
-    .results-scroll::-webkit-scrollbar       { width: 4px; }
-    .results-scroll::-webkit-scrollbar-track  { background: transparent; }
-    .results-scroll::-webkit-scrollbar-thumb  { background: var(--cinza-300); border-radius: 4px; }
-    .results-scroll::-webkit-scrollbar-thumb:hover { background: var(--vermelho); }
+    .results-scroll { max-height: 440px; overflow-y: auto; }
+    .results-scroll::-webkit-scrollbar { width: 6px; }
+    .results-scroll::-webkit-scrollbar-track { background: transparent; }
+    .results-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+    .results-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
     /* ═══════════════════════════════════════════════════════
        BADGES
        ═══════════════════════════════════════════════════════ */
     .badge {
       display: inline-block;
-      padding: 2px 8px;
-      border-radius: 20px;
+      padding: 3px 9px;
+      border-radius: 999px;
       font-size: 10px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.04em;
+      font-family: var(--font-display);
     }
-    .badge-lab { background: var(--cinza-100); color: var(--cinza-700); }
-    .badge-img { background: var(--vermelho-bg); color: var(--vermelho); }
+    .badge-lab { background: var(--bg-subtle-2); color: var(--text-secondary); }
+    .badge-img { background: var(--primary-soft); color: var(--primary); }
 
     mark {
-      background: rgba(192, 57, 43, 0.15);
-      color: var(--vermelho-escuro);
-      border-radius: 2px;
-      padding: 0 2px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      border-radius: 3px;
+      padding: 1px 3px;
+      font-weight: 700;
     }
+    [data-theme="dark"] mark { color: var(--primary-light); }
 
     /* ═══════════════════════════════════════════════════════
        BOTÕES
        ═══════════════════════════════════════════════════════ */
     .btn-add {
-      background: var(--verde);
-      color: var(--branco);
+      background: var(--success);
+      color: white;
       border: none;
-      border-radius: var(--radius);
+      border-radius: var(--radius-sm);
       width: 30px;
-      height: 28px;
-      font-size: 15px;
+      height: 30px;
+      font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
+      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto;
+      box-shadow: var(--shadow-sm);
     }
-    .btn-add:hover  { background: #219a52; transform: scale(1.08); }
+    .btn-add:hover { background: #15803D; transform: translateY(-1px) scale(1.05); box-shadow: var(--shadow); }
     .btn-add:active { transform: scale(0.95); }
 
     .btn-del {
-      background: none;
-      color: var(--cinza-500);
-      border: 1px solid var(--cinza-300);
-      border-radius: var(--radius);
-      padding: 3px 7px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
       cursor: pointer;
       font-size: 12px;
       transition: all 0.15s;
     }
-    .btn-del:hover { color: var(--vermelho); border-color: var(--vermelho); background: var(--vermelho-bg); }
+    .btn-del:hover { color: var(--primary); border-color: var(--primary); background: var(--primary-soft); }
 
     .btn-action {
       flex: 1;
-      padding: 10px 16px;
+      padding: 11px 18px;
       border: none;
       border-radius: var(--radius);
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 600;
-      font-family: var(--font);
+      font-family: var(--font-display);
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
+      letter-spacing: 0.01em;
     }
-    .btn-print       { background: var(--vermelho); color: var(--branco); }
-    .btn-print:hover  { background: var(--vermelho-escuro); }
-    .btn-clear       { background: var(--branco); color: var(--cinza-700); border: 1px solid var(--cinza-300); }
-    .btn-clear:hover  { background: var(--cinza-100); border-color: var(--cinza-500); }
+    .btn-print { background: var(--primary); color: white; box-shadow: var(--shadow); }
+    .btn-print:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-clear { background: var(--bg-elevated); color: var(--text-secondary); border: 1px solid var(--border); }
+    .btn-clear:hover { background: var(--bg-subtle-2); border-color: var(--border-strong); color: var(--text); }
 
-    .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
 
-    .empty-msg { text-align: center; padding: 30px; color: var(--cinza-300); font-size: 13px; }
+    .empty-msg {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-disabled);
+      font-size: 13px;
+      font-style: italic;
+    }
 
     /* ═══════════════════════════════════════════════════════
        TABELA DO ORÇAMENTO
        ═══════════════════════════════════════════════════════ */
-    .orc-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+    .orc-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
 
-    .orc-table thead tr  { background: var(--cinza-900); color: var(--branco); }
-    .orc-table thead th  {
-      padding: 8px 10px;
+    .orc-table thead tr { background: var(--bg-subtle-2); }
+    .orc-table thead th {
+      padding: 10px 12px;
       text-align: left;
-      font-size: 10px;
-      font-weight: 600;
+      font-size: 10.5px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      border-bottom: 1px solid var(--border);
     }
     .orc-table thead th.num { width: 32px; text-align: center; }
-    .orc-table thead th.qty { width: 58px; text-align: center; }
+    .orc-table thead th.qty { width: 64px; text-align: center; }
     .orc-table thead th.val { text-align: right; }
     .orc-table thead th.sub { text-align: right; }
-    .orc-table thead th.del { width: 36px; }
+    .orc-table thead th.del { width: 40px; }
 
-    .orc-table tbody tr               { border-bottom: 1px solid var(--cinza-100); }
-    .orc-table tbody tr:nth-child(even) { background: var(--cinza-50); }
+    .orc-table tbody tr { border-bottom: 1px solid var(--border); }
+    .orc-table tbody tr:last-child { border-bottom: none; }
 
-    .orc-table td      { padding: 7px 10px; vertical-align: middle; }
-    .orc-table td.num  { text-align: center; color: var(--cinza-300); font-size: 11px; }
-    .orc-table td.val  { color: var(--verde-valor); font-weight: 600; text-align: right; white-space: nowrap; }
-    .orc-table td.sub  { color: var(--verde-valor); font-weight: 700; text-align: right; white-space: nowrap; }
-    .orc-table td.tipo { font-size: 11px; }
+    .orc-table td { padding: 10px 12px; vertical-align: middle; }
+    .orc-table td.num { text-align: center; color: var(--text-disabled); font-size: 11px; font-feature-settings: 'tnum'; }
+    .orc-table td.val { color: var(--success); font-weight: 600; text-align: right; white-space: nowrap; font-feature-settings: 'tnum'; }
+    .orc-table td.sub { color: var(--success); font-weight: 700; text-align: right; white-space: nowrap; font-feature-settings: 'tnum'; }
 
-    .orc-scroll { max-height: 380px; overflow-y: auto; }
-    .orc-scroll::-webkit-scrollbar       { width: 4px; }
-    .orc-scroll::-webkit-scrollbar-track  { background: transparent; }
-    .orc-scroll::-webkit-scrollbar-thumb  { background: var(--cinza-300); border-radius: 4px; }
+    .orc-scroll { max-height: 400px; overflow-y: auto; }
+    .orc-scroll::-webkit-scrollbar { width: 6px; }
+    .orc-scroll::-webkit-scrollbar-track { background: transparent; }
+    .orc-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
 
     .qty-input {
-      width: 48px;
+      width: 52px;
       text-align: center;
-      border: 1px solid var(--cinza-300);
-      border-radius: var(--radius);
-      padding: 4px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 5px;
       font-size: 13px;
-      font-weight: 600;
-      font-family: var(--font);
-      background: var(--cinza-50);
+      font-weight: 700;
+      font-family: var(--font-body);
+      background: var(--bg-subtle);
+      color: var(--text);
+      font-feature-settings: 'tnum';
     }
     .qty-input:focus {
       outline: none;
-      border-color: var(--vermelho);
-      background: var(--branco);
+      border-color: var(--primary);
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-glow);
     }
 
     /* ═══════════════════════════════════════════════════════
        TOTAIS
        ═══════════════════════════════════════════════════════ */
     .totals {
-      margin-top: 16px;
-      border-top: 1px solid var(--cinza-100);
-      padding-top: 14px;
+      margin-top: 18px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
     }
 
     .total-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 5px 0;
-      font-size: 13px;
+      padding: 6px 0;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      font-feature-settings: 'tnum';
     }
-    .total-row.desconto { color: var(--vermelho); }
+    .total-row span:last-child { font-weight: 600; color: var(--text); }
+    .total-row.desconto { color: var(--primary); }
+    .total-row.desconto span:last-child { color: var(--primary); }
+
     .total-row.final {
-      margin-top: 10px;
-      padding: 14px 16px;
-      background: var(--vermelho);
-      border-radius: var(--radius);
-      color: var(--branco);
+      margin-top: 12px;
+      padding: 16px 18px;
+      background: var(--ink);
+      border-radius: var(--radius-lg);
+      color: var(--ink-on);
       font-size: 16px;
       font-weight: 700;
+      font-family: var(--font-display);
+      letter-spacing: -0.01em;
     }
+    .total-row.final span:last-child { color: var(--ink-on); font-size: 18px; }
 
     .desconto-wrap { display: flex; align-items: center; gap: 8px; }
 
     .desconto-input {
-      width: 64px;
-      border: 1px solid var(--vermelho);
-      border-radius: var(--radius);
-      padding: 4px 8px;
+      width: 72px;
+      border: 1.5px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 5px 10px;
       font-size: 13px;
-      color: var(--vermelho);
-      font-weight: 600;
-      font-family: var(--font);
+      color: var(--primary);
+      font-weight: 700;
+      font-family: var(--font-body);
       text-align: center;
-      background: var(--vermelho-bg);
+      background: var(--primary-soft);
+      font-feature-settings: 'tnum';
     }
-    .desconto-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1); }
+    .desconto-input:focus { outline: none; box-shadow: var(--shadow-glow); }
 
     /* ═══════════════════════════════════════════════════════
        TOAST
        ═══════════════════════════════════════════════════════ */
     .toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--cinza-900);
-      color: var(--branco);
-      padding: 10px 18px;
+      bottom: 28px;
+      right: 28px;
+      background: var(--ink);
+      color: var(--ink-on);
+      padding: 12px 22px;
       border-radius: var(--radius);
-      font-size: 13px;
-      font-weight: 500;
-      box-shadow: var(--sombra-md);
-      transform: translateY(80px);
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(100px);
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 9999;
+      font-family: var(--font-display);
     }
     .toast.show { transform: translateY(0); opacity: 1; }
 
     /* ═══════════════════════════════════════════════════════
-       PRINT — AJUSTES PARA IMPRESSÃO
+       PRINT
        ═══════════════════════════════════════════════════════ */
     @media print {
       body { background: white; }
       .layout { grid-template-columns: 1fr; }
-
-      /* Esconde card de busca, ações, botões de remover */
       .card:first-of-type { display: none; }
       .actions, .btn-del { display: none; }
-
-      /* AJUSTE 1: esconder rodapé do navegador (URL/site) — dica de impressão */
+      .theme-toggle { display: none; }
       @page { margin: 12mm; }
-
-      /* AJUSTE 2: mostrar quantidade na impressão (sem o input editável) */
       .qty-input {
         border: none !important;
         background: transparent !important;
@@ -468,14 +755,21 @@
         -webkit-appearance: none;
         margin: 0;
       }
-
-      /* AJUSTE 3: esconder linha de desconto na impressão (mantém Subtotal e Total) */
       .total-row.desconto { display: none !important; }
+      .header, .total-row.final, .badge {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
 
-      /* Cores corretas na impressão */
-      .header           { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-      .total-row.final  { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-      .badge            { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    /* ═══════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; padding: 16px; }
+      .paciente-grid { grid-template-columns: 1fr; }
+      .header { padding: 14px 16px; }
+      .paciente-card { margin: 16px; }
     }
   </style>
 </head>
@@ -485,10 +779,13 @@
   <!-- ══════════ HEADER ══════════ -->
   <div class="header">
     <img class="header-logo" src="data:image/jpeg;base64,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" alt="Hospital Samaritano">
-    <div>
+    <div class="header-text">
       <h1>Sistema de Orçamento — Exames Particulares</h1>
       <p id="data-header"></p>
     </div>
+    <button class="theme-toggle" id="theme-toggle" title="Alternar tema claro/escuro" aria-label="Alternar tema">
+      <span id="theme-icon">🌙</span>
+    </button>
   </div>
 
   <!-- ══════════ DADOS DO PACIENTE ══════════ -->
@@ -498,7 +795,24 @@
     <div class="paciente-grid">
       <div class="field"><label>Paciente</label><input id="pac-nome" type="text" placeholder="Nome completo"></div>
       <div class="field"><label>Nome da Atendente</label><input id="pac-atendente" type="text" placeholder="Nome da atendente"></div>
-      <div class="field"><label>Data</label><input id="pac-data" type="date"></div>
+      <div class="field"><label>Data</label>
+        <div class="date-wrap">
+          <input id="pac-data" type="text" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="off">
+          <div class="date-icon" id="date-icon" title="Abrir calendário">📅</div>
+          <div class="calendar-popup" id="cal-popup">
+            <div class="cal-head">
+              <button class="cal-nav" id="cal-prev" type="button">‹</button>
+              <span class="cal-title" id="cal-title">—</span>
+              <button class="cal-nav" id="cal-next" type="button">›</button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+            <div class="cal-footer">
+              <button class="cal-shortcut" id="cal-today" type="button">Hoje</button>
+              <button class="cal-shortcut" id="cal-clear" type="button">Limpar</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="field"><label>Contato do Hospital</label><input id="pac-contato" type="text" value="(19) 99804-4102" readonly></div>
       <div class="field"><label>Convênio</label><input id="pac-convenio" type="text" value="PARTICULAR"></div>
     </div>
@@ -633,14 +947,203 @@ const EXAMES = [{"nome": "Acido Urico", "tipo": "Sangue/Lab", "tuss": "40301150"
 
     /* ── Inicialização ────────────────────────────────────── */
 
+    /* Helpers de data dd/mm/aaaa */
+    function toBR(date) {
+      const d = String(date.getDate()).padStart(2, '0');
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const y = date.getFullYear();
+      return `${d}/${m}/${y}`;
+    }
+    function fromBR(str) {
+      const m = str.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (!m) return null;
+      const date = new Date(+m[3], +m[2] - 1, +m[1]);
+      if (date.getDate() != +m[1] || date.getMonth() != +m[2] - 1) return null;
+      return date;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      const hoje = new Date().toISOString().split('T')[0];
-      document.getElementById('pac-data').value = hoje;
+      const hoje = new Date();
+      document.getElementById('pac-data').value = toBR(hoje);
       document.getElementById('data-header').textContent =
-        new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        hoje.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       document.getElementById('total-exames').textContent = `${EXAMES.length} exames`;
       document.getElementById('search-count').textContent = `Digite para buscar entre os ${EXAMES.length} exames`;
+
+      initTheme();
+      initCalendar();
+      initDateMask();
     });
+
+    /* ── Tema claro/escuro ────────────────────────────────── */
+    function initTheme() {
+      const btn = document.getElementById('theme-toggle');
+      const icon = document.getElementById('theme-icon');
+      // Detecta preferência do sistema
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      // Lê se já tem tema salvo na sessão
+      let tema = sessionStorage.getItem('tema-samaritano');
+      if (!tema) tema = prefersDark ? 'dark' : 'light';
+      aplicarTema(tema);
+
+      btn.addEventListener('click', () => {
+        const atual = document.documentElement.getAttribute('data-theme') || 'light';
+        const novo = atual === 'dark' ? 'light' : 'dark';
+        aplicarTema(novo);
+        try { sessionStorage.setItem('tema-samaritano', novo); } catch(e) {}
+      });
+
+      function aplicarTema(t) {
+        if (t === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          icon.textContent = '☀️';
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+          icon.textContent = '🌙';
+        }
+      }
+    }
+
+    /* ── Máscara dd/mm/aaaa no input ──────────────────────── */
+    function initDateMask() {
+      const input = document.getElementById('pac-data');
+      input.addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+        if (v.length > 4) v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+        else if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+        e.target.value = v;
+      });
+      input.addEventListener('blur', e => {
+        const d = fromBR(e.target.value);
+        if (e.target.value && !d) {
+          // Inválida — restaura a data de hoje silenciosamente
+          input.value = toBR(new Date());
+          toast('Data inválida — restaurado para hoje');
+        }
+      });
+    }
+
+    /* ── Calendário customizado ──────────────────────────── */
+    function initCalendar() {
+      const popup = document.getElementById('cal-popup');
+      const icon = document.getElementById('date-icon');
+      const input = document.getElementById('pac-data');
+      const grid = document.getElementById('cal-grid');
+      const title = document.getElementById('cal-title');
+      let viewDate = new Date();
+
+      function abrir() {
+        const dataAtual = fromBR(input.value);
+        if (dataAtual) viewDate = new Date(dataAtual);
+        renderizar();
+        popup.classList.add('show');
+      }
+      function fechar() { popup.classList.remove('show'); }
+
+      icon.addEventListener('click', e => {
+        e.stopPropagation();
+        popup.classList.contains('show') ? fechar() : abrir();
+      });
+
+      document.addEventListener('click', e => {
+        if (!popup.contains(e.target) && e.target !== icon) fechar();
+      });
+
+      document.getElementById('cal-prev').addEventListener('click', e => {
+        e.stopPropagation();
+        viewDate.setMonth(viewDate.getMonth() - 1);
+        renderizar();
+      });
+      document.getElementById('cal-next').addEventListener('click', e => {
+        e.stopPropagation();
+        viewDate.setMonth(viewDate.getMonth() + 1);
+        renderizar();
+      });
+      document.getElementById('cal-today').addEventListener('click', e => {
+        e.stopPropagation();
+        const h = new Date();
+        input.value = toBR(h);
+        viewDate = new Date(h);
+        renderizar();
+        fechar();
+      });
+      document.getElementById('cal-clear').addEventListener('click', e => {
+        e.stopPropagation();
+        input.value = '';
+        fechar();
+      });
+
+      function renderizar() {
+        const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+        const dows = ['D','S','T','Q','Q','S','S'];
+        title.textContent = `${meses[viewDate.getMonth()]} ${viewDate.getFullYear()}`;
+
+        grid.innerHTML = '';
+        // Cabeçalho dias da semana
+        dows.forEach(d => {
+          const el = document.createElement('div');
+          el.className = 'cal-dow';
+          el.textContent = d;
+          grid.appendChild(el);
+        });
+
+        const ano = viewDate.getFullYear();
+        const mes = viewDate.getMonth();
+        const primeiroDia = new Date(ano, mes, 1).getDay(); // 0=Dom
+        const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+        const diasMesAnterior = new Date(ano, mes, 0).getDate();
+
+        const hoje = new Date();
+        const hojeStr = toBR(hoje);
+        const selecionada = input.value;
+
+        // Dias do mês anterior (cinza)
+        for (let i = primeiroDia - 1; i >= 0; i--) {
+          const dia = diasMesAnterior - i;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'cal-day muted';
+          btn.textContent = dia;
+          const d = new Date(ano, mes - 1, dia);
+          btn.addEventListener('click', e => { e.stopPropagation(); selecionar(d); });
+          grid.appendChild(btn);
+        }
+
+        // Dias do mês atual
+        for (let dia = 1; dia <= diasNoMes; dia++) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'cal-day';
+          btn.textContent = dia;
+          const d = new Date(ano, mes, dia);
+          const dStr = toBR(d);
+          if (dStr === hojeStr) btn.classList.add('today');
+          if (dStr === selecionada) btn.classList.add('selected');
+          btn.addEventListener('click', e => { e.stopPropagation(); selecionar(d); });
+          grid.appendChild(btn);
+        }
+
+        // Completa com dias do próximo mês
+        const totalCelulas = 7 + primeiroDia + diasNoMes;
+        const restantes = (7 - (totalCelulas % 7)) % 7;
+        for (let dia = 1; dia <= restantes; dia++) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'cal-day muted';
+          btn.textContent = dia;
+          const d = new Date(ano, mes + 1, dia);
+          btn.addEventListener('click', e => { e.stopPropagation(); selecionar(d); });
+          grid.appendChild(btn);
+        }
+      }
+
+      function selecionar(date) {
+        input.value = toBR(date);
+        viewDate = new Date(date);
+        renderizar();
+        fechar();
+      }
+    }
 
     /* ── Busca ─────────────────────────────────────────────── */
 
@@ -705,7 +1208,7 @@ const EXAMES = [{"nome": "Acido Urico", "tipo": "Sangue/Lab", "tuss": "40301150"
 
       body.innerHTML = resultados.map(e => {
         const nomeHL = destacar(e.nome, palavras);
-        const badge  = e.tipo === 'Laboratorial'
+        const badge  = e.tipo === 'Sangue/Lab'
           ? '<span class="badge badge-lab">Lab</span>'
           : '<span class="badge badge-img">Imagem</span>';
         const idx = EXAMES.findIndex(x => x.nome === e.nome && x.tuss === e.tuss);
@@ -749,7 +1252,7 @@ const EXAMES = [{"nome": "Acido Urico", "tipo": "Sangue/Lab", "tuss": "40301150"
 
       body.innerHTML = itens.map((item, i) => {
         const sub   = item.preco * item.qtde;
-        const badge = item.tipo === 'Laboratorial'
+        const badge = item.tipo === 'Sangue/Lab'
           ? '<span class="badge badge-lab">Lab</span>'
           : '<span class="badge badge-img">Img</span>';
 
